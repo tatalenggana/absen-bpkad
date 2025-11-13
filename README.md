@@ -177,9 +177,10 @@ chmod -R 755 public/storage
 #### 5. Web Server Configuration
 
 **Apache (.htaccess)**:
-- File `.htaccess` sudah dikonfigurasi di `public/` folder
-- Enable mod_rewrite: `a2enmod rewrite`
-- Restart Apache: `systemctl restart apache2`
+
+-   File `.htaccess` sudah dikonfigurasi di `public/` folder
+-   Enable mod_rewrite: `a2enmod rewrite`
+-   Restart Apache: `systemctl restart apache2`
 
 **Nginx** (sample config):
 
