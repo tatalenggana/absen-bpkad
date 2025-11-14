@@ -18,40 +18,45 @@ class AttendanceController extends Controller
      * User Dashboard - Attendance
      */
     public function userDashboard()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
+    
+    // Check apakah user profile sudah dibuat
+    if (!$user->profile) {
+        \Log::warning("User {$user->id} ({$user->email}) tidak memiliki profile");
         
-        // Check apakah user profile sudah dibuat
-        if (!$user->profile) {
-            \Log::warning("User {$user->id} ({$user->email}) tidak memiliki profile");
-            return redirect('/')->with('error', 'Profil user belum lengkap. Silakan hubungi admin.');
-        }
-        
-        $today = now()->toDateString();
-
-        // Get today's attendance
-        $todayAttendance = Attendance::where('user_id', $user->id)
-            ->whereDate('date', $today)
-            ->first();
-
-        // Get this month's attendance summary
-        $monthAttendances = Attendance::where('user_id', $user->id)
-            ->whereMonth('date', now()->month)
-            ->whereYear('date', now()->year)
-            ->get();
-
-        $stats = [
-            'present' => $monthAttendances->where('status', 'present')->count(),
-            'late' => $monthAttendances->where('status', 'late')->count(),
-            'absent' => $monthAttendances->where('status', 'absent')->count(),
-        ];
-
-        return view('user.dashboard', [
-            'todayAttendance' => $todayAttendance,
-            'stats' => $stats,
-            'attendances' => $monthAttendances,
+        // SOLUSI 1: Tampilkan view error khusus (RECOMMENDED)
+        return view('errors.incomplete-profile', [
+            'message' => 'Profil Anda belum lengkap. Silakan hubungi admin untuk melengkapi profil.'
         ]);
     }
+    
+    $today = now()->toDateString();
+
+    // Get today's attendance
+    $todayAttendance = Attendance::where('user_id', $user->id)
+        ->whereDate('date', $today)
+        ->first();
+
+    // Get this month's attendance summary
+    $monthAttendances = Attendance::where('user_id', $user->id)
+        ->whereMonth('date', now()->month)
+        ->whereYear('date', now()->year)
+        ->orderBy('date', 'desc')
+        ->get();
+
+    $stats = [
+        'present' => $monthAttendances->where('status', 'present')->count(),
+        'late' => $monthAttendances->where('status', 'late')->count(),
+        'absent' => $monthAttendances->where('status', 'absent')->count(),
+    ];
+
+    return view('user.dashboard', [
+        'todayAttendance' => $todayAttendance,
+        'stats' => $stats,
+        'monthlyAttendance' => $monthAttendances,  // ← View pakai ini
+    ]);
+}
 
     /**
      * Check-in absensi

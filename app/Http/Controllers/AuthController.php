@@ -15,6 +15,12 @@ class AuthController extends Controller
      */
     public function showLogin()
     {
+        // Jika sudah login, redirect ke dashboard
+        if (auth()->check()) {
+            return auth()->user()->isAdmin() 
+                ? redirect()->route('admin.dashboard')
+                : redirect()->route('user.dashboard');
+        }
         return view('auth.login');
     }
 
@@ -23,6 +29,12 @@ class AuthController extends Controller
      */
     public function showRegister()
     {
+        // Jika sudah login, redirect ke dashboard
+        if (auth()->check()) {
+            return auth()->user()->isAdmin() 
+                ? redirect()->route('admin.dashboard')
+                : redirect()->route('user.dashboard');
+        }
         return view('auth.register');
     }
 

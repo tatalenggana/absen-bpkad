@@ -15,14 +15,15 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && auth()->user()->isAdmin()) {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        $user = auth()->user();
+        if ($user->role === 'admin') {
             return $next($request);
         }
 
-        if (!auth()->check()) {
-            return redirect('/login')->with('error', 'Silakan login terlebih dahulu.');
-        }
-
-        abort(403, 'Hanya admin yang dapat mengakses halaman ini.');
+        return abort(403, 'Hanya admin yang dapat mengakses halaman ini.');
     }
 }

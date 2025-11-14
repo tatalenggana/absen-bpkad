@@ -15,14 +15,15 @@ class UserMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && auth()->user()->isUser()) {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        $user = auth()->user();
+        if ($user->role === 'user') {
             return $next($request);
         }
 
-        if (!auth()->check()) {
-            return redirect('/login')->with('error', 'Silakan login terlebih dahulu.');
-        }
-
-        abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        return abort(403, 'Anda tidak memiliki akses ke halaman ini.');
     }
 }
