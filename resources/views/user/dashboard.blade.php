@@ -242,20 +242,56 @@
                     <span class="required">*</span>
                 </label>
                 <div style="border: 2px dashed var(--primary); border-radius: 8px; padding: 16px; background: #f0f9ff;">
-                    <video id="videoPreview" style="width: 100%; border-radius: 6px; display: none;"></video>
-                    <canvas id="photoCanvas" style="display: none;"></canvas>
-                    <img id="photoPreview" style="width: 100%; border-radius: 6px; display: none; max-height: 300px; object-fit: cover;">
-                    <button type="button" id="startCameraBtn" onclick="startCamera()" class="btn btn-primary btn-block">
-                        📷 Ambil Foto
-                    </button>
-                    <button type="button" id="capturePhotoBtn" onclick="capturePhoto()" class="btn btn-success btn-block" style="display: none; margin-top: 8px; background: linear-gradient(135deg, var(--success) 0%, #059669 100%);">
-                        ✓ Ambil Screenshot
-                    </button>
+                    <!-- Camera View -->
+                    <div id="cameraView" style="display: none;">
+                        <video id="videoPreview" style="width: 100%; border-radius: 6px; margin-bottom: 12px;"></video>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <button type="button" id="capturePhotoBtn" onclick="capturePhoto()" class="btn btn-success" style="background: linear-gradient(135deg, var(--success) 0%, #059669 100%);">
+                                ✓ Ambil Foto
+                            </button>
+                            <button type="button" id="closeCameraBtn" onclick="closeCamera()" class="btn btn-secondary">
+                                ✕ Batal
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Photo Preview -->
+                    <div id="photoView" style="display: none;">
+                        <img id="photoPreview" style="width: 100%; border-radius: 6px; margin-bottom: 12px; max-height: 300px; object-fit: cover;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <button type="button" id="saveFotoBtn" onclick="saveFoto()" class="btn btn-primary" style="background: linear-gradient(135deg, var(--primary) 0%, #1e40af 100%);">
+                                ✓ Pakai Foto Ini
+                            </button>
+                            <button type="button" id="retakeFotoBtn" onclick="startCamera()" class="btn btn-secondary">
+                                🔄 Ambil Ulang
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Start Button -->
+                    <div id="startView">
+                        <button type="button" id="startCameraBtn" onclick="startCamera()" class="btn btn-primary btn-block">
+                            📷 Ambil Foto
+                        </button>
+                    </div>
+
+                    <!-- Locked Foto View -->
+                    <div id="lockedFotoView" style="display: none;">
+                        <img id="lockedPhotoPreview" style="width: 100%; border-radius: 6px; margin-bottom: 12px; max-height: 300px; object-fit: cover;">
+                        <div style="text-align: center; padding: 12px; background: #f0fdf4; border: 2px solid var(--success); border-radius: 8px; margin-bottom: 12px;">
+                            <p style="margin: 0; color: #22c55e; font-weight: 600;">✅ Foto Sudah Disimpan</p>
+                            <p style="margin: 4px 0 0 0; font-size: 12px; color: #16a34a;">Ambil foto baru untuk mengubah</p>
+                        </div>
+                        <button type="button" onclick="resetPhotoForRetake()" class="btn btn-secondary btn-block">
+                            🔄 Ambil Foto Baru
+                        </button>
+                    </div>
                 </div>
-                <small class="form-hint">Format: JPG, PNG | Foto harus jelas menampilkan wajah Anda</small>
+                <small class="form-hint">Format: JPG | Foto harus jelas menampilkan wajah Anda</small>
             </div>
 
             <input type="hidden" id="photoData" name="photo_data">
+            <input type="hidden" id="photoLocked" value="false">
 
             <!-- Location Section -->
             <div class="form-group">
@@ -305,6 +341,10 @@
 @push('scripts')
 <script>
     let stream = null;
+    let capturedPhotoData = null;
+    const OFFICE_LAT = {{ (float) env('OFFICE_LATITUDE', -7.2239) }};
+    const OFFICE_LNG = {{ (float) env('OFFICE_LONGITUDE', 107.6597) }};
+    const OFFICE_RADIUS = {{ (int) env('OFFICE_RADIUS_METERS', 500) }};
 
     function openCheckInModal() {
         document.getElementById('checkInModal').style.display = 'flex';
@@ -314,48 +354,102 @@
 
     function closeCheckInModal() {
         document.getElementById('checkInModal').style.display = 'none';
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
-        }
-        document.getElementById('videoPreview').style.display = 'none';
-        document.getElementById('photoPreview').style.display = 'none';
-        document.getElementById('startCameraBtn').style.display = 'block';
-        document.getElementById('capturePhotoBtn').style.display = 'none';
+        closeCamera();
+        resetPhotoUI();
+    }
+
+    function resetPhotoUI() {
+        capturedPhotoData = null;
+        document.getElementById('photoData').value = '';
+        document.getElementById('photoLocked').value = 'false';
+        document.getElementById('startView').style.display = 'block';
+        document.getElementById('cameraView').style.display = 'none';
+        document.getElementById('photoView').style.display = 'none';
+        document.getElementById('lockedFotoView').style.display = 'none';
     }
 
     function startCamera() {
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
-            .then(s => {
-                stream = s;
-                document.getElementById('videoPreview').srcObject = stream;
-                document.getElementById('videoPreview').style.display = 'block';
-                document.getElementById('startCameraBtn').style.display = 'none';
-                document.getElementById('capturePhotoBtn').style.display = 'block';
-            })
-            .catch(err => {
-                alert('❌ Tidak bisa akses kamera: ' + err.message);
-            });
+        // Jika foto sudah disimpan (locked), jangan bisa ambil foto biasa
+        const photoLocked = document.getElementById('photoLocked').value === 'true';
+        
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+                .then(s => {
+                    stream = s;
+                    const video = document.getElementById('videoPreview');
+                    video.srcObject = stream;
+                    video.play();
+                    
+                    // Show camera view, hide others
+                    document.getElementById('startView').style.display = 'none';
+                    document.getElementById('lockedFotoView').style.display = 'none';
+                    document.getElementById('cameraView').style.display = 'block';
+                    document.getElementById('photoView').style.display = 'none';
+                })
+                .catch(err => {
+                    alert('❌ Tidak bisa akses kamera: ' + err.message);
+                });
+        } else {
+            alert('❌ Browser Anda tidak support akses kamera');
+        }
+    }
+
+    function closeCamera() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
+        document.getElementById('startView').style.display = 'block';
+        document.getElementById('cameraView').style.display = 'none';
+        document.getElementById('photoView').style.display = 'none';
     }
 
     function capturePhoto() {
         const video = document.getElementById('videoPreview');
-        const canvas = document.getElementById('photoCanvas');
+        const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
-        canvas.getContext('2d').drawImage(video, 0, 0);
         
-        const photoPreview = document.getElementById('photoPreview');
-        photoPreview.src = canvas.toDataURL('image/jpeg');
-        photoPreview.style.display = 'block';
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0);
         
-        document.getElementById('photoData').value = canvas.toDataURL('image/jpeg');
+        // Save photo data
+        capturedPhotoData = canvas.toDataURL('image/jpeg', 0.9);
         
+        // Show preview
+        document.getElementById('photoPreview').src = capturedPhotoData;
+        
+        // Show photo view, hide camera
+        document.getElementById('cameraView').style.display = 'none';
+        document.getElementById('photoView').style.display = 'block';
+        
+        // Stop camera
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
+            stream = null;
         }
-        document.getElementById('videoPreview').style.display = 'none';
-        document.getElementById('startCameraBtn').style.display = 'block';
-        document.getElementById('capturePhotoBtn').style.display = 'none';
+    }
+
+    function saveFoto() {
+        if (capturedPhotoData) {
+            document.getElementById('photoData').value = capturedPhotoData;
+            document.getElementById('photoLocked').value = 'true';
+            
+            // Show locked view
+            document.getElementById('lockedPhotoPreview').src = capturedPhotoData;
+            document.getElementById('photoView').style.display = 'none';
+            document.getElementById('lockedFotoView').style.display = 'block';
+            document.getElementById('startView').style.display = 'none';
+        }
+    }
+
+    function resetPhotoForRetake() {
+        capturedPhotoData = null;
+        document.getElementById('photoData').value = '';
+        document.getElementById('photoLocked').value = 'false';
+        document.getElementById('lockedFotoView').style.display = 'none';
+        document.getElementById('startView').style.display = 'block';
+        startCamera();
     }
 
     function getLocation() {
@@ -377,15 +471,28 @@
                 document.getElementById('latitude').value = lat;
                 document.getElementById('longitude').value = lon;
                 
-                document.getElementById('locationStatus').style.display = 'block';
-                document.getElementById('locationStatus').innerHTML = `
+                // Calculate distance from office
+                const distance = calculateDistance(OFFICE_LAT, OFFICE_LNG, lat, lon);
+                const isInRange = distance <= OFFICE_RADIUS;
+                
+                let statusHTML = `
                     ✅ <strong>Lokasi Berhasil Didapat!</strong><br>
                     Lat: ${lat.toFixed(6)}<br>
-                    Lng: ${lon.toFixed(6)}
+                    Lng: ${lon.toFixed(6)}<br>
+                    📏 Jarak dari kantor: ${Math.round(distance)}m
                 `;
                 
+                if (!isInRange) {
+                    statusHTML += `<br><span style="color: #dc2626; font-weight: 600;">⚠️ PERINGATAN: Lokasi terlalu jauh! (Max: ${OFFICE_RADIUS}m)</span>`;
+                }
+                
+                document.getElementById('locationStatus').style.display = 'block';
+                document.getElementById('locationStatus').innerHTML = statusHTML;
+                
                 btn.innerHTML = '✅ Lokasi Sudah Didapat';
-                btn.style.background = 'linear-gradient(135deg, var(--success) 0%, #059669 100%)';
+                btn.style.background = isInRange 
+                    ? 'linear-gradient(135deg, var(--success) 0%, #059669 100%)' 
+                    : 'linear-gradient(135deg, var(--warning) 0%, #d97706 100%)';
                 btn.style.opacity = '1';
             },
             function(error) {
@@ -395,6 +502,19 @@
                 btn.style.opacity = '1';
             }
         );
+    }
+
+    // Haversine formula untuk hitung jarak
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371000; // Earth radius in meters
+        const rad = Math.PI / 180;
+        const deltaLat = (lat2 - lat1) * rad;
+        const deltaLon = (lon2 - lon1) * rad;
+        const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+                  Math.cos(lat1 * rad) * Math.cos(lat2 * rad) *
+                  Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
     }
 
     document.getElementById('checkInForm').addEventListener('submit', function(e) {
@@ -411,6 +531,14 @@
         if (!lat || !lng) {
             e.preventDefault();
             alert('⚠️ Mohon ambil lokasi Anda terlebih dahulu!');
+            return false;
+        }
+
+        // Check geofencing di client-side (server juga akan validasi)
+        const distance = calculateDistance(OFFICE_LAT, OFFICE_LNG, parseFloat(lat), parseFloat(lng));
+        if (distance > OFFICE_RADIUS) {
+            e.preventDefault();
+            alert(`⚠️ Lokasi Anda terlalu jauh dari kantor!\n\nJarak: ${Math.round(distance)}m\nBatas maksimal: ${OFFICE_RADIUS}m`);
             return false;
         }
 

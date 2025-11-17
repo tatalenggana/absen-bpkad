@@ -15,6 +15,28 @@ class AttendanceController extends Controller
     const CHECK_IN_DEADLINE = '08:00:00';
 
     /**
+     * Calculate distance between two coordinates using Haversine formula
+     * Returns distance in meters
+     */
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        $earthRadius = 6371000; // Earth's radius in meters
+        
+        $lat1Rad = deg2rad($lat1);
+        $lat2Rad = deg2rad($lat2);
+        $deltaLat = deg2rad($lat2 - $lat1);
+        $deltaLon = deg2rad($lon2 - $lon1);
+        
+        $a = sin($deltaLat / 2) * sin($deltaLat / 2) +
+             cos($lat1Rad) * cos($lat2Rad) *
+             sin($deltaLon / 2) * sin($deltaLon / 2);
+        
+        $c = 2 * asin(sqrt($a));
+        
+        return $earthRadius * $c;
+    }
+
+    /**
      * User Dashboard - Attendance
      */
     public function userDashboard()
@@ -82,6 +104,20 @@ class AttendanceController extends Controller
             'longitude' => 'required|numeric',
             'notes' => 'nullable|string|max:500',
         ]);
+
+        // Check geofencing - apakah user dalam radius kantor
+        $officeLatitude = (float) env('OFFICE_LATITUDE', -7.2239);
+        $officeLongitude = (float) env('OFFICE_LONGITUDE', 107.6597);
+        $radiusMeters = (int) env('OFFICE_RADIUS_METERS', 500);
+        
+        $userLatitude = (float) $validated['latitude'];
+        $userLongitude = (float) $validated['longitude'];
+        
+        $distance = $this->calculateDistance($officeLatitude, $officeLongitude, $userLatitude, $userLongitude);
+        
+        if ($distance > $radiusMeters) {
+            return back()->with('error', "❌ Lokasi Anda terlalu jauh dari kantor! Jarak: " . round($distance) . "m (Max: {$radiusMeters}m)");
+        }
 
         // Check apakah masih dalam jam absensi (sebelum jam 8 pagi)
         $checkInTime = now('Asia/Jakarta')->toTimeString();

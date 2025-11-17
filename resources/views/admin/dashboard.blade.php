@@ -128,10 +128,10 @@
                             </span>
                         </td>
                         <td style="padding: 12px; text-align: center;">
-                            <a href="{{ route('admin.userHistory', $attendance->user->id) }}" 
-                                style="color: var(--primary); font-weight: 600; text-decoration: none; cursor: pointer;">
-                                Lihat Detail →
-                            </a>
+                            <button type="button" onclick="openDetailModal('{{ $attendance->user->name }}', '{{ $attendance->date->format('d M Y') }}', '{{ $attendance->check_in_time ? \Carbon\Carbon::parse($attendance->check_in_time)->format('H:i:s') : '-' }}', '{{ $attendance->photo_path }}', '{{ $attendance->location_latitude }}', '{{ $attendance->location_longitude }}')" 
+                                style="color: var(--primary); font-weight: 600; border: none; background: none; cursor: pointer; text-decoration: none;">
+                                👁️ Lihat Detail →
+                            </button>
                         </td>
                     </tr>
                 @empty
@@ -150,5 +150,96 @@
         {{ $attendances->links() }}
     </div>
 </div>
+
+<!-- Detail Modal -->
+<div id="detailModal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); z-index: 50; flex-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 12px; padding: 24px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="font-size: 20px; font-weight: 700; margin: 0;">📸 Detail Absensi</h2>
+            <button type="button" onclick="closeDetailModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280;">✕</button>
+        </div>
+
+        <!-- User & Date Info -->
+        <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px;">
+                <div>
+                    <p style="color: #6b7280; margin: 0 0 4px 0; font-size: 12px;">👤 Nama Peserta</p>
+                    <p id="detailName" style="font-weight: 600; margin: 0;"></p>
+                </div>
+                <div>
+                    <p style="color: #6b7280; margin: 0 0 4px 0; font-size: 12px;">📅 Tanggal</p>
+                    <p id="detailDate" style="font-weight: 600; margin: 0;"></p>
+                </div>
+                <div>
+                    <p style="color: #6b7280; margin: 0 0 4px 0; font-size: 12px;">⏱️ Jam Masuk</p>
+                    <p id="detailTime" style="font-weight: 600; margin: 0; color: var(--primary);"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photo Section -->
+        <div id="photoSection" style="display: none; margin-bottom: 20px;">
+            <p style="font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">📸 Foto Selfie:</p>
+            <img id="detailPhoto" style="width: 100%; border-radius: 8px; max-height: 350px; object-fit: cover;">
+        </div>
+
+        <!-- Location Section -->
+        <div id="locationSection" style="display: none; margin-bottom: 20px;">
+            <p style="font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">📍 Lokasi Keberadaan:</p>
+            <div style="background: #f0fdf4; border: 2px solid var(--success); padding: 12px; border-radius: 8px; font-size: 13px;">
+                <div style="margin-bottom: 8px;">
+                    <strong style="color: #22c55e;">Latitude:</strong>
+                    <span id="detailLat"></span>
+                </div>
+                <div>
+                    <strong style="color: #22c55e;">Longitude:</strong>
+                    <span id="detailLng"></span>
+                </div>
+                <a id="mapLink" href="#" target="_blank" style="display: block; margin-top: 12px; color: var(--primary); font-weight: 600; text-decoration: none;">
+                    🗺️ Buka di Google Maps →
+                </a>
+            </div>
+        </div>
+
+        <!-- Close Button -->
+        <div style="text-align: right; margin-top: 20px;">
+            <button type="button" onclick="closeDetailModal()" class="btn btn-secondary">Tutup</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDetailModal(name, date, time, photoPath, lat, lng) {
+        document.getElementById('detailName').textContent = name;
+        document.getElementById('detailDate').textContent = date;
+        document.getElementById('detailTime').textContent = time;
+        
+        // Photo
+        if (photoPath && photoPath.trim()) {
+            document.getElementById('photoSection').style.display = 'block';
+            document.getElementById('detailPhoto').src = '{{ asset("storage") }}/' + photoPath;
+        } else {
+            document.getElementById('photoSection').style.display = 'none';
+        }
+        
+        // Location
+        if (lat && lat.trim() && lng && lng.trim()) {
+            document.getElementById('locationSection').style.display = 'block';
+            document.getElementById('detailLat').textContent = lat;
+            document.getElementById('detailLng').textContent = lng;
+            document.getElementById('mapLink').href = `https://www.google.com/maps?q=${lat},${lng}`;
+        } else {
+            document.getElementById('locationSection').style.display = 'none';
+        }
+        
+        document.getElementById('detailModal').style.display = 'flex';
+        document.getElementById('detailModal').style.alignItems = 'center';
+        document.getElementById('detailModal').style.justifyContent = 'center';
+    }
+    
+    function closeDetailModal() {
+        document.getElementById('detailModal').style.display = 'none';
+    }
+</script>
 
 @endsection
