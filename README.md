@@ -1,14 +1,14 @@
-<h1 align="center"\>Sistem Absensi PKL BPKAD Garut 📍\</h1\>
+<h1 align="center"\>Sistem Absensi PKL BPKAD Garut</h1\>
 
 ##
 
-\<h2 id="tentang"\>🤔 Apa Konsep web yang saya buat?\</h2\>
+<h2 id="tentang"\>🤔 Apa Konsep web yang saya buat?</h2\>
 
 Aplikasi ini adalah **Sistem Absensi Digital** yang dirancang khusus untuk memantau dan mengelola kehadiran peserta Praktik Kerja Lapangan (PKL) atau magang di BPKAD Garut.
 
 Konsep utamanya adalah menciptakan solusi modern, akurat, dan transparan untuk manajemen kehadiran dengan mengintegrasikan **Validasi Lokasi Berbasis GPS (Geofencing)** dan **Bukti Foto**.
 
-\<h2 id="fitur"\>🤨 Fitur apa aja sih yg ada di proyek ini?\</h2\>
+<h2 id="fitur"\>🤨 Fitur apa aja sih yg ada di proyek ini?</h2\>
 
 ### Fitur Kunci Aplikasi
 
@@ -38,7 +38,7 @@ Konsep utamanya adalah menciptakan solusi modern, akurat, dan transparan untuk m
 
 ---
 
-\<h2 id="testing-account"\>👤 Akun Default untuk Pengujian\</h2\>
+<h2 id="testing-account"\>👤 Akun Default untuk Pengujian</h2\>
 
 _(Silakan sesuaikan kredensial ini jika proyek Anda sudah memiliki data awal)_
 
@@ -54,7 +54,7 @@ _(Silakan sesuaikan kredensial ini jika proyek Anda sudah memiliki data awal)_
 
 ---
 
-\<h2 id="pre-requisite"\>💾 Prasyarat\</h2\>
+<h2 id="pre-requisite"\>💾 Prasyarat</h2\>
 
 _(Sesuaikan versi teknologi ini dengan yang Anda gunakan)_
 
@@ -63,9 +63,9 @@ _(Sesuaikan versi teknologi ini dengan yang Anda gunakan)_
 -   Framework: **[Sebutkan Framework Anda di sini, cth: Laravel/CodeIgniter]**
 -   Untuk penggunaan di lapangan, diperlukan **Smartphone** dengan fitur **GPS aktif**.
 
-\<h2 id="installation"\>💻 Instalasi\</h2\>
+<h2 id="installation"\>💻 Instalasi</h2\>
 
-\<h3 id="develop-yourself"\>🏃‍♂️ Mengembangkan Sendiri\</h3\>
+<h3 id="develop-yourself"\>🏃‍♂️ Mengembangkan Sendiri</h3\>
 
 1.  Klona repositori:
 
@@ -110,6 +110,4 @@ php artisan serve
 
 ---
 
-\<h2 id="pembuat"\>🧍 Pembuat\</h2\>
-
-\<p\>Sistem Absensi PKL BPKAD Garut dikembangkan oleh **[Nama/Tim Anda]**.\</p\>
+<h2 id="pembuat"\>🧍 Pembuat</h2\>
