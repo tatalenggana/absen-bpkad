@@ -1,4 +1,4 @@
-\<h1 align="center"\>Sistem Absensi PKL BPKAD Garut 📍\</h1\>
+<h1 align="center"\>Sistem Absensi PKL BPKAD Garut 📍\</h1\>
 
 ##
 
