@@ -1,7 +1,5 @@
 <h1 align="center"\>Sistem Absensi PKL BPKAD Garut</h1\>
 
-##
-
 <h2 id="tentang"\>🤔 Apa Konsep web yang saya buat?</h2\>
 
 Aplikasi ini adalah **Sistem Absensi Digital** yang dirancang khusus untuk memantau dan mengelola kehadiran peserta Praktik Kerja Lapangan (PKL) atau magang di BPKAD Garut.
