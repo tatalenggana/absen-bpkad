@@ -1,473 +1,115 @@
-# 📋 Sistem Absensi BPKAD Garut - PKL/Magang Management
+\<h1 align="center"\>Sistem Absensi PKL BPKAD Garut 📍\</h1\>
 
-Sistem manajemen absensi modern untuk Program Pelatihan Kerja (PKL) BPKAD Garut dengan fitur-fitur lengkap seperti login/register, dashboard admin, dashboard peserta, foto selfie, dan GPS location tracking.
+##
 
-**Status**: ✅ Production Ready
+\<h2 id="tentang"\>🤔 Apa Konsep web yang saya buat?\</h2\>
 
-## ✨ Fitur Utama
+Aplikasi ini adalah **Sistem Absensi Digital** yang dirancang khusus untuk memantau dan mengelola kehadiran peserta Praktik Kerja Lapangan (PKL) atau magang di BPKAD Garut.
 
-### 🔐 Autentikasi & Otorisasi
+Konsep utamanya adalah menciptakan solusi modern, akurat, dan transparan untuk manajemen kehadiran dengan mengintegrasikan **Validasi Lokasi Berbasis GPS (Geofencing)** dan **Bukti Foto**.
 
--   ✅ Sistem login dan register yang aman
--   ✅ Password terenkripsi dengan bcrypt (12 rounds)
--   ✅ Role-based access control (Admin & User/Peserta PKL)
--   ✅ Session management dengan database storage
--   ✅ Middleware protection untuk unauthorized access
+\<h2 id="fitur"\>🤨 Fitur apa aja sih yg ada di proyek ini?\</h2\>
 
-### ⏰ Sistem Absensi dengan Deadline
+### Fitur Kunci Aplikasi
 
--   ✅ **Deadline: Pukul 08:00 Pagi**
--   ✅ Absensi sebelum jam 08:00 → **✅ HADIR** (Hijau)
--   ✅ Absensi setelah jam 08:00 → **⏰ TERLAMBAT** (Kuning)
--   ✅ Check-in dan Check-out otomatis
--   ✅ Riwayat absensi per bulan
--   ✅ Status tracking real-time
+-   **Validasi Geofencing (GPS)**
+    -   Absensi (_Check-in_ dan _Check-out_) hanya dapat dilakukan jika peserta berada dalam radius yang telah ditentukan dari lokasi kantor.
+-   **Bukti Kehadiran**
+    -   Setiap absensi wajib menyertakan foto yang diambil secara _real-time_ sebagai bukti kehadiran di lokasi.
+-   **Dashboard Modern**
+    -   Antarmuka yang responsif dan mudah digunakan untuk Admin dan Peserta PKL.
 
-### � Foto & Lokasi
+### Multi User
 
--   ✅ Webcam capture untuk foto selfie saat check-in
--   ✅ GPS location tracking dengan geolocation API
--   ✅ Base64 image encoding & storage
--   ✅ Photo gallery di admin dashboard
--   ✅ Location coordinates (latitude, longitude)
+#### 👨‍💼 Admin
 
-### 👥 Profil Peserta PKL
+-   **Pemantauan Real-Time:** Melihat seluruh aktivitas absensi saat ini.
+-   **Pengelolaan Peserta:** Mengelola dan memperbarui data peserta PKL.
+-   **Generate Laporan:** Menghasilkan laporan kehadiran yang akurat dan periodik (misalnya, harian, mingguan, bulanan).
+-   **Pengaturan Sistem Dinamis:**
+    -   Mengubah batas waktu absensi (_check-in / check-out_).
+    -   Mengatur ulang titik lokasi GPS (_Geofencing radius_) **tanpa perlu mengubah kode program**.
 
--   ✅ Nama, Email, Password
--   ✅ Sekolah/Universitas
--   ✅ Bidang Penempatan (Akuntansi, Sekretariat, Anggaran, Keuangan, Perbendaharaan)
--   ✅ Profile management
+#### 🧑‍💻 Peserta PKL (User)
 
-### �📊 Dashboard Admin
+-   **Absensi Cepat:** Melakukan _check-in_ dan _check-out_ harian dengan mudah melalui _smartphone_.
+-   **Riwayat Kehadiran:** Melihat dan memantau riwayat kehadiran mereka sendiri.
+-   **Integrasi Smartphone:** Dirancang untuk akses yang lancar melalui perangkat seluler.
 
--   ✅ Statistik real-time (Total Peserta, Absensi Hari Ini, Terlambat)
--   ✅ Filter absensi berdasarkan tanggal
--   ✅ Filter absensi berdasarkan bulan/tahun
--   ✅ Lihat detail riwayat per peserta
--   ✅ Laporan terperinci dengan tabel lengkap
--   ✅ Pagination untuk data besar
--   ✅ Status badges dengan color coding
+---
 
-### 👤 Dashboard Peserta PKL
+\<h2 id="testing-account"\>👤 Akun Default untuk Pengujian\</h2\>
 
--   ✅ Tombol Check-in/Check-out dengan modal
--   ✅ Status absensi hari ini dengan emoji indicators
--   ✅ Statistik bulan berjalan (Hadir/Terlambat/Absen)
--   ✅ Riwayat absensi lengkap
--   ✅ Profile info (Bidang & Sekolah)
+_(Silakan sesuaikan kredensial ini jika proyek Anda sudah memiliki data awal)_
 
-### 🎨 UI/UX Modern
+### 👨‍💼 Admin
 
--   ✅ Responsive design dengan CSS modern
--   ✅ Gradient headers dan cards
--   ✅ Color-coded status badges
--   ✅ Emoji icons untuk better UX
--   ✅ Loading animations
--   ✅ Form hints & validation feedback
--   ✅ Professional error pages (401, 403, 404, 500)
+-   Nama Pengguna: adminbpkad
+-   Kata Sandi: 123456
 
-## 🚀 Installation & Deployment
+### 🧑‍💻 Peserta PKL
 
-### Prerequisites
+-   Nama Pengguna: pkl001
+-   Kata Sandi: 123456
 
--   PHP 8.2+ (tested with PHP 8.2.12)
--   MySQL 5.7+
--   Composer
--   Node.js & NPM (optional, for frontend build)
+---
 
-### Local Development Setup
+\<h2 id="pre-requisite"\>💾 Prasyarat\</h2\>
 
-#### 1. Clone Repository
+_(Sesuaikan versi teknologi ini dengan yang Anda gunakan)_
+
+-   PHP (Misalnya, v8.1 atau yang lebih baru) & Web Server (Apache/Nginx)
+-   Database (Misalnya, MySQL/MariaDB)
+-   Framework: **[Sebutkan Framework Anda di sini, cth: Laravel/CodeIgniter]**
+-   Untuk penggunaan di lapangan, diperlukan **Smartphone** dengan fitur **GPS aktif**.
+
+\<h2 id="installation"\>💻 Instalasi\</h2\>
+
+\<h3 id="develop-yourself"\>🏃‍♂️ Mengembangkan Sendiri\</h3\>
+
+1.  Klona repositori:
+
+<!-- end list -->
 
 ```bash
-git clone <repository-url>
-cd absensi-bpkad
+git clone [Alamat Repo Anda]
+cd [Nama Folder Proyek]
 ```
 
-#### 2. Install Dependencies
+2.  Instal dependensi dan konfigurasi environment:
+
+<!-- end list -->
 
 ```bash
 composer install
 npm install
-```
-
-#### 3. Environment Setup
-
-```bash
 cp .env.example .env
-php artisan key:generate
+# Ubah koneksi DB dan API Key GPS/Layanan Lokasi di file .env
 ```
 
-#### 4. Database Configuration
+3.  Setup Database:
 
-Edit `.env` dan set database credentials:
-
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=absensi_bpkad
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-#### 5. Migrate Database
+<!-- end list -->
 
 ```bash
+php artisan key:generate
 php artisan migrate --seed
 ```
 
-#### 6. Storage Symlink
+4.  Jalankan aplikasi:
+
+<!-- end list -->
 
 ```bash
-php artisan storage:link
-```
-
-#### 7. Cache Configuration
-
-```bash
-php artisan config:cache
-php artisan route:cache
-```
-
-#### 8. Run Development Server
-
-```bash
+npm run dev
+# Di terminal berbeda
 php artisan serve
 ```
 
-Akses di: **http://localhost:8000**
+> **Catatan:** Pastikan Anda telah memasukkan koordinat kantor BPKAD Garut (atau lokasi yang digunakan untuk testing) ke dalam tabel pengaturan database **sebelum** testing Geofencing.
 
-### Production Deployment
+---
 
-#### 1. Environment Setup
+\<h2 id="pembuat"\>🧍 Pembuat\</h2\>
 
-Update `.env` untuk production:
-
-```env
-APP_ENV=production
-APP_DEBUG=false
-SESSION_DRIVER=database
-CACHE_STORE=database
-```
-
-#### 2. Database Migration
-
-```bash
-php artisan migrate --force
-php artisan db:seed
-```
-
-#### 3. Optimize Application
-
-```bash
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-php artisan optimize
-```
-
-#### 4. Setup File Permissions
-
-```bash
-chmod -R 755 storage bootstrap/cache
-chmod -R 755 public/storage
-```
-
-#### 5. Web Server Configuration
-
-**Apache (.htaccess)**:
-
--   File `.htaccess` sudah dikonfigurasi di `public/` folder
--   Enable mod_rewrite: `a2enmod rewrite`
--   Restart Apache: `systemctl restart apache2`
-
-**Nginx** (sample config):
-
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com;
-    root /var/www/absensi-bpkad/public;
-
-    add_header X-Frame-Options "SAMEORIGIN" always;
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header X-XSS-Protection "1; mode=block" always;
-
-    index index.html index.htm index.php;
-
-    charset utf-8;
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location = /robots.txt  { access_log off; log_not_found off; }
-
-    error_page 404 /index.php;
-
-    location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-        include fastcgi_params;
-    }
-
-    location ~ /\.(?!well-known).* {
-        deny all;
-    }
-}
-```
-
-### 📝 Default Credentials
-
-**⚠️ PENTING**: Ganti credentials ini setelah deployment pertama!
-
-```
-Admin Account:
-- Email: admin@bpkad.local
-- Password: admin123
-
-Demo User Account:
-- Email: karyawan1@bpkad.local
-- Password: password123
-```
-
-### 📧 Email Configuration (Optional)
-
-Untuk fitur email (jika ditambahkan):
-
-```env
-MAIL_MAILER=smtp
-MAIL_HOST=your-smtp-host
-MAIL_PORT=587
-MAIL_USERNAME=your-email
-MAIL_PASSWORD=your-password
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=noreply@bpkad.local
-MAIL_FROM_NAME="Absensi BPKAD"
-```
-
-## 📁 Struktur Project
-
-```
-absensi-bpkad/
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/
-│   │   │   ├── AuthController.php          # Auth logic
-│   │   │   └── AttendanceController.php    # Absensi & Admin
-│   │   └── Middleware/
-│   │       ├── AdminMiddleware.php         # Admin validation
-│   │       └── UserMiddleware.php          # User validation
-│   └── Models/
-│       ├── User.php                        # User model
-│       ├── UserProfile.php                 # Profile PKL
-│       └── Attendance.php                  # Absensi records
-│
-├── bootstrap/
-│   └── app.php                             # App configuration
-│
-├── config/
-│   ├── app.php
-│   ├── database.php
-│   └── filesystems.php
-│
-├── database/
-│   ├── migrations/
-│   │   ├── create_users_table.php
-│   │   ├── create_user_profiles_table.php
-│   │   └── create_attendances_table.php
-│   └── seeders/
-│       └── DatabaseSeeder.php
-│
-├── public/
-│   ├── index.php                           # Entry point
-│   ├── .htaccess                           # Apache config
-│   └── storage → ../storage/app/public     # Symlink
-│
-├── resources/views/
-│   ├── layouts/
-│   │   └── app.blade.php                   # Master layout
-│   ├── errors/
-│   │   ├── 401.blade.php                   # Unauthorized
-│   │   ├── 403.blade.php                   # Forbidden
-│   │   ├── 404.blade.php                   # Not found
-│   │   └── 500.blade.php                   # Server error
-│   ├── auth/
-│   │   ├── login.blade.php
-│   │   └── register.blade.php
-│   ├── user/
-│   │   ├── dashboard.blade.php
-│   │   └── profile.blade.php
-│   ├── admin/
-│   │   ├── dashboard.blade.php
-│   │   └── user-history.blade.php
-│   └── welcome.blade.php
-│
-├── routes/
-│   └── web.php                             # Web routes
-│
-├── storage/
-│   └── app/
-│       ├── public/attendances/             # Photos storage
-│       └── sessions/                       # Session storage
-│
-├── .env                                    # Environment config
-├── .htaccess                               # Laravel rewrite
-├── composer.json
-├── package.json
-├── phpunit.xml
-└── README.md
-```
-
-## 🔑 Routes & Endpoints
-
-### Public Routes
-
-```
-GET  /                  → Home page
-GET  /login             → Login form
-POST /login             → Submit login
-GET  /register          → Register form
-POST /register          → Submit register
-```
-
-### User Routes (Authenticated + Role: user)
-
-```
-GET  /dashboard                   → User dashboard (check-in/check-out)
-GET  /profile                     → User profile
-POST /attendance/check-in         → Submit check-in (photo + location)
-POST /attendance/check-out        → Submit check-out
-```
-
-### Admin Routes (Authenticated + Role: admin)
-
-```
-GET  /admin/dashboard                  → Admin dashboard (statistics)
-GET  /admin/attendance/filter-date     → Filter attendance by date
-GET  /admin/attendance/filter-month    → Filter attendance by month/year
-GET  /admin/user/{userId}/history     → View user attendance history
-```
-
-### Authentication Routes
-
-```
-POST /logout                       → Logout user
-```
-
-## 📊 Database Schema
-
-### users table
-
-```sql
-CREATE TABLE users (
-  id BIGINT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(255),
-  email VARCHAR(255) UNIQUE,
-  password VARCHAR(255),
-  role ENUM('user', 'admin'),
-  email_verified_at TIMESTAMP NULL,
-  remember_token VARCHAR(100),
-  created_at TIMESTAMP,
-  updated_at TIMESTAMP
-);
-```
-
-### user_profiles table
-
-```sql
-CREATE TABLE user_profiles (
-  id BIGINT PRIMARY KEY AUTO_INCREMENT,
-  user_id BIGINT UNIQUE,
-  school_name VARCHAR(255),
-  division ENUM('akuntansi','sekretaria','anggaran','keuangan','perbendaharaan'),
-  notes TEXT,
-  created_at TIMESTAMP,
-  updated_at TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-```
-
-### attendances table
-
-```sql
-CREATE TABLE attendances (
-  id BIGINT PRIMARY KEY AUTO_INCREMENT,
-  user_id BIGINT,
-  date DATE,
-  check_in_time TIME,
-  check_out_time TIME,
-  status ENUM('present', 'late', 'absent'),
-  notes TEXT,
-  photo_path VARCHAR(255),
-  location_latitude VARCHAR(50),
-  location_longitude VARCHAR(50),
-  created_at TIMESTAMP,
-  updated_at TIMESTAMP,
-  UNIQUE KEY (user_id, date),
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
-```
-
-## 🔐 Security Features
-
--   ✅ CSRF Protection (Laravel CSRF tokens)
--   ✅ Password Hashing (bcrypt with 12 rounds)
--   ✅ SQL Injection Prevention (Eloquent ORM)
--   ✅ XSS Protection (Blade template escaping)
--   ✅ Session Security (database storage, encryption)
--   ✅ Role-Based Access Control (middleware)
--   ✅ Authorization Headers (HTTP Bearer)
--   ✅ File Upload Validation
-
-## 🐛 Troubleshooting
-
-### Error: "SQLSTATE[HY000]: General error"
-
-```bash
-php artisan migrate:reset
-php artisan migrate --seed
-```
-
-### Error: "Storage symlink not found"
-
-```bash
-php artisan storage:link
-```
-
-### Error: "Class not found"
-
-```bash
-composer dump-autoload
-```
-
-### Session not persisting
-
-Check `.env`:
-
-```env
-SESSION_DRIVER=database
-CACHE_STORE=database
-```
-
-Run: `php artisan migrate`
-
-### Photos not displaying
-
-```bash
-php artisan storage:link
-chmod -R 755 storage/app/public
-```
-
-## Support & Contact
-
-Untuk support, hubungi:
-
--   Email: admin@bpkad.local
--   Departemen IT: [contact-info]
-
-## 📄 License
-
-Licensed under MIT License. Copyright © 2025 BPKAD Garut.
+\<p\>Sistem Absensi PKL BPKAD Garut dikembangkan oleh **[Nama/Tim Anda]**.\</p\>
