@@ -1,111 +1,181 @@
-<h1 align="center"\>Sistem Absensi PKL BPKAD Garut</h1\>
+# Sistem Absensi PKL BPKAD Garut
 
-<h2 id="tentang"\>🤔 Apa Konsep web yang saya buat?</h2\>
+## Tentang Aplikasi
 
 Aplikasi ini adalah **Sistem Absensi Digital** yang dirancang khusus untuk memantau dan mengelola kehadiran peserta Praktik Kerja Lapangan (PKL) atau magang di BPKAD Garut.
 
-Konsep utamanya adalah menciptakan solusi modern, akurat, dan transparan untuk manajemen kehadiran dengan mengintegrasikan **Validasi Lokasi Berbasis GPS (Geofencing)** dan **Bukti Foto**.
+Konsep utamanya adalah menciptakan solusi modern, akurat, dan transparan untuk manajemen kehadiran dengan mengintegrasikan **Validasi Lokasi Berbasis GPS (Geofencing)** dan **Bukti Foto Digital**. Peserta PKL hanya dapat melakukan absensi jika berada dalam radius yang telah ditentukan dari lokasi kantor, dan setiap absensi wajib menyertakan foto sebagai bukti kehadiran.
 
-<h2 id="fitur"\>🤨 Fitur apa aja sih yg ada di proyek ini?</h2\>
+## Fitur Utama
 
-### Fitur Kunci Aplikasi
+### Untuk Admin
 
--   **Validasi Geofencing (GPS)**
-    -   Absensi (_Check-in_ dan _Check-out_) hanya dapat dilakukan jika peserta berada dalam radius yang telah ditentukan dari lokasi kantor.
--   **Bukti Kehadiran**
-    -   Setiap absensi wajib menyertakan foto yang diambil secara _real-time_ sebagai bukti kehadiran di lokasi.
--   **Dashboard Modern**
-    -   Antarmuka yang responsif dan mudah digunakan untuk Admin dan Peserta PKL.
+-   Dashboard dengan statistik real-time (Total Peserta, Hadir Hari Ini, Terlambat)
+-   Kelola data peserta PKL (CRUD)
+-   Laporan absensi lengkap dengan filter per bidang penempatan dan tanggal
+-   Pengaturan sistem dinamis:
+    -   Set jam batas check-in
+    -   Set lokasi geofencing (latitude, longitude, radius)
+    -   Update alamat lokasi absensi
+-   Generate laporan (Excel, PDF, CSV)
 
-### Multi User
+### Untuk Peserta PKL (User)
 
-#### 👨‍💼 Admin
+-   Check-in dan check-out dengan validasi GPS
+-   Capture foto otomatis saat absensi
+-   Lihat riwayat kehadiran pribadi
+-   Edit profile (nama, email, sekolah, bidang penempatan)
+-   Filter riwayat per tanggal
 
--   **Pemantauan Real-Time:** Melihat seluruh aktivitas absensi saat ini.
--   **Pengelolaan Peserta:** Mengelola dan memperbarui data peserta PKL.
--   **Generate Laporan:** Menghasilkan laporan kehadiran yang akurat dan periodik (misalnya, harian, mingguan, bulanan).
--   **Pengaturan Sistem Dinamis:**
-    -   Mengubah batas waktu absensi (_check-in / check-out_).
-    -   Mengatur ulang titik lokasi GPS (_Geofencing radius_) **tanpa perlu mengubah kode program**.
+### Fitur Keamanan & Validasi
 
-#### 🧑‍💻 Peserta PKL (User)
+-   Geofencing: Absensi hanya berlaku dalam radius 500m dari lokasi kantor
+-   Validasi GPS real-time
+-   Distance calculation otomatis
+-   Status detection (Hadir, Terlambat, Absen)
+-   Password hashing dengan bcrypt
+-   CSRF protection & Session management
 
--   **Absensi Cepat:** Melakukan _check-in_ dan _check-out_ harian dengan mudah melalui _smartphone_.
--   **Riwayat Kehadiran:** Melihat dan memantau riwayat kehadiran mereka sendiri.
--   **Integrasi Smartphone:** Dirancang untuk akses yang lancar melalui perangkat seluler.
+### Desain & User Experience
 
----
-
-<h2 id="testing-account"\>👤 Akun Default untuk Pengujian</h2\>
-
-_(Silakan sesuaikan kredensial ini jika proyek Anda sudah memiliki data awal)_
-
-### 👨‍💼 Admin
-
--   Nama Pengguna: adminbpkad
--   Kata Sandi: 123456
-
-### 🧑‍💻 Peserta PKL
-
--   Nama Pengguna: pkl001
--   Kata Sandi: 123456
+-   Modern UI dengan tema biru profesional
+-   Responsive design (Mobile, Tablet, Desktop)
+-   Gradient stat cards dengan smooth animations
+-   Dark sidebar navigation
+-   FontAwesome icons
+-   Dashboard modern dan intuitif
 
 ---
 
-<h2 id="pre-requisite"\>💾 Prasyarat</h2\>
+## Akun Default untuk Testing
 
-_(Sesuaikan versi teknologi ini dengan yang Anda gunakan)_
+### Admin
 
--   PHP (Misalnya, v8.1 atau yang lebih baru) & Web Server (Apache/Nginx)
--   Database (Misalnya, MySQL/MariaDB)
--   Framework: **[Sebutkan Framework Anda di sini, cth: Laravel/CodeIgniter]**
--   Untuk penggunaan di lapangan, diperlukan **Smartphone** dengan fitur **GPS aktif**.
+-   Email: admin@bpkad.local
+-   Password: admin123
 
-<h2 id="installation"\>💻 Instalasi</h2\>
+### Peserta PKL
 
-<h3 id="develop-yourself"\>🏃‍♂️ Mengembangkan Sendiri</h3\>
+-   Email: karyawan1@bpkad.local
+-   Password: password123
 
-1.  Klona repositori:
+---
 
-<!-- end list -->
+## Prasyarat & Teknologi
+
+-   PHP 8.2.12 atau lebih baru
+-   Laravel 12.37.0
+-   MySQL/MariaDB
+-   Composer
+-   Node.js & NPM
+-   Browser modern dengan dukungan Geolocation API
+-   Smartphone dengan GPS aktif (untuk pengujian di lapangan)
+
+## Instalasi
+
+### 1. Clone Repositori
 
 ```bash
-git clone [Alamat Repo Anda]
-cd [Nama Folder Proyek]
+git clone https://github.com/tatalenggana/absen-bpkad.git
+cd absen-bpkad
 ```
 
-2.  Instal dependensi dan konfigurasi environment:
-
-<!-- end list -->
+### 2. Install Dependensi
 
 ```bash
 composer install
 npm install
-cp .env.example .env
-# Ubah koneksi DB dan API Key GPS/Layanan Lokasi di file .env
 ```
 
-3.  Setup Database:
-
-<!-- end list -->
+### 3. Setup Environment
 
 ```bash
+cp .env.example .env
 php artisan key:generate
+```
+
+### 4. Konfigurasi Database
+
+Edit file `.env` dan sesuaikan konfigurasi database:
+
+```
+DB_DATABASE=absensi_bpkad
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 5. Jalankan Migration & Seeding
+
+```bash
 php artisan migrate --seed
 ```
 
-4.  Jalankan aplikasi:
-
-<!-- end list -->
+### 6. Build Assets
 
 ```bash
 npm run dev
-# Di terminal berbeda
+```
+
+### 7. Jalankan Development Server
+
+```bash
 php artisan serve
 ```
 
-> **Catatan:** Pastikan Anda telah memasukkan koordinat kantor BPKAD Garut (atau lokasi yang digunakan untuk testing) ke dalam tabel pengaturan database **sebelum** testing Geofencing.
+Aplikasi akan berjalan di `http://localhost:8000`
+
+Catatan: Pastikan koordinat lokasi geofencing sudah diatur di halaman Admin Settings sebelum melakukan testing absensi.
 
 ---
 
-<h2 id="pembuat"\>By Gista Nuru Arifah Putri Lenggana</h2\>
+## Struktur Database
+
+### Tabel Utama
+
+-   **users** - Data pengguna (admin & peserta PKL)
+-   **user_profiles** - Detail profile peserta (sekolah, bidang penempatan)
+-   **attendances** - Riwayat absensi (check-in/out, foto, GPS, status)
+-   **sessions** - Session management
+
+## Struktur Folder
+
+```
+absen-bpkad/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   └── AttendanceController.php
+│   │   │   └── AuthController.php
+│   │   └── Middleware/
+│   │       ├── AdminMiddleware.php
+│   │       └── UserMiddleware.php
+│   └── Models/
+│       ├── User.php
+│       ├── UserProfile.php
+│       └── Attendance.php
+├── database/
+│   ├── migrations/
+│   ├── seeders/
+│   │   └── DatabaseSeeder.php
+│   └── factories/
+├── resources/
+│   ├── views/
+│   │   ├── auth/
+│   │   ├── user/
+│   │   ├── admin/
+│   │   └── components/
+│   ├── css/
+│   └── js/
+├── routes/
+│   └── web.php
+├── public/
+├── storage/
+├── .env.example
+└── README.md
+```
+
+## Pembuat
+
+**Gista Nuru Arifah Putri Lenggana**
+
+Sistem Absensi PKL BPKAD Garut - 2025
