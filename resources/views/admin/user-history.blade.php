@@ -3,25 +3,29 @@
 @section('title', 'Riwayat Absensi - Admin Dashboard')
 
 @section('content')
-<!-- Back Button & User Header -->
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-    <div>
-        <h1 style="font-size: 32px; font-weight: 700; margin: 0 0 8px 0;">👤 {{ $user->name }}</h1>
-        <p style="color: #6b7280; margin: 0;">{{ $user->email }}</p>
-        @if($user->profile)
-            <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">
-                📍 {{ $user->profile->getDivisionLabel() }} | 🎓 {{ $user->profile->school_name }}
-            </p>
-        @endif
-    </div>
-    <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">← Kembali</a>
-</div>
+@include('components.admin-sidebar')
 
-<!-- Statistics Cards -->
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 24px;">
+<!-- Main Content -->
+<div style="margin-left: 250px; padding: 24px;">
+    <!-- Back Button & User Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+            <h1 style="font-size: 32px; font-weight: 700; margin: 0 0 8px 0;"><i class="fas fa-user"></i> {{ $user->name }}</h1>
+            <p style="color: #6b7280; margin: 0;">{{ $user->email }}</p>
+            @if($user->profile)
+                <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">
+                    <i class="fas fa-map-marker-alt"></i> {{ $user->profile->getDivisionLabel() }} | <i class="fas fa-graduation-cap"></i> {{ $user->profile->school_name }}
+                </p>
+            @endif
+        </div>
+        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">← Kembali</a>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 24px;">
     <div class="card">
         <div class="card-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-            <h3 style="font-size: 14px; margin: 0;">✅ Total Hadir</h3>
+            <h3 style="font-size: 14px; margin: 0;"><i class="fas fa-check-circle"></i> Total Hadir</h3>
         </div>
         <div class="card-body" style="text-align: center; padding: 24px;">
             <p style="font-size: 36px; font-weight: 700; color: var(--success); margin: 0;">
@@ -32,7 +36,7 @@
 
     <div class="card">
         <div class="card-header" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
-            <h3 style="font-size: 14px; margin: 0;">⏰ Total Terlambat</h3>
+            <h3 style="font-size: 14px; margin: 0;"><i class="fas fa-clock"></i> Total Terlambat</h3>
         </div>
         <div class="card-body" style="text-align: center; padding: 24px;">
             <p style="font-size: 36px; font-weight: 700; color: var(--warning); margin: 0;">
@@ -43,7 +47,7 @@
 
     <div class="card">
         <div class="card-header" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
-            <h3 style="font-size: 14px; margin: 0;">❌ Total Absen</h3>
+            <h3 style="font-size: 14px; margin: 0;"><i class="fas fa-times-circle"></i> Total Absen</h3>
         </div>
         <div class="card-body" style="text-align: center; padding: 24px;">
             <p style="font-size: 36px; font-weight: 700; color: var(--danger); margin: 0;">
@@ -56,7 +60,7 @@
 <!-- Attendance Table -->
 <div class="card">
     <div class="card-header">
-        <h2 style="font-size: 20px;">📋 Riwayat Absensi Lengkap</h2>
+        <h2 style="font-size: 20px;"><i class="fas fa-list"></i> Riwayat Absensi Lengkap</h2>
     </div>
     <div class="card-body" style="overflow-x: auto;">
         <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
@@ -101,20 +105,20 @@
                                 @endif
                             ">
                                 @if ($attendance->status == 'present')
-                                    ✅ Hadir
+                                    <i class="fas fa-check-circle"></i> Hadir
                                 @elseif ($attendance->status == 'late')
-                                    ⏰ Terlambat
+                                    <i class="fas fa-clock"></i> Terlambat
                                 @else
-                                    ❌ Absen
+                                    <i class="fas fa-times-circle"></i> Absen
                                 @endif
                             </span>
                         </td>
                         <td style="padding: 12px; font-size: 13px;">{{ $attendance->notes ?? '-' }}</td>
                         <td style="padding: 12px; text-align: center;">
                             @if($attendance->photo_path || ($attendance->location_latitude && $attendance->location_longitude))
-                                <button type="button" onclick="openDetailModal({{ $attendance->id }}, '{{ $attendance->user->name }}', '{{ $attendance->date->format('d M Y') }}', '{{ $attendance->check_in_time ? \Carbon\Carbon::parse($attendance->check_in_time)->format('H:i:s') : '-' }}', '{{ $attendance->photo_path }}', '{{ $attendance->location_latitude }}', '{{ $attendance->location_longitude }}')" 
+                                <button type="button" onclick="openDetailModal({{ $attendance->id }}, '{{ $attendance->user->name }}', '{{ $attendance->date->format('d M Y') }}', '{{ $attendance->check_in_time ? \Carbon\Carbon::parse($attendance->check_in_time)->format('H:i:s') : '-' }}', '{{ $attendance->photo_path }}', '{{ $attendance->location_latitude }}', '{{ $attendance->location_longitude }}')"
                                     style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s;">
-                                    👁️ Lihat Detail
+                                    <i class="fas fa-eye"></i> Lihat Detail
                                 </button>
                             @else
                                 <span style="color: #d1d5db; font-size: 12px;">-</span>
@@ -124,7 +128,7 @@
                 @empty
                     <tr>
                         <td colspan="7" style="padding: 20px; text-align: center; color: #6b7280;">
-                            📭 Belum ada data absensi
+                            <i class="fas fa-inbox"></i> Belum ada data absensi
                         </td>
                     </tr>
                 @endforelse
@@ -142,23 +146,23 @@
 <div id="detailModal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); z-index: 50; flex-items: center; justify-content: center;">
     <div style="background: white; border-radius: 12px; padding: 24px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="font-size: 20px; font-weight: 700; margin: 0;">📸 Detail Absensi</h2>
-            <button type="button" onclick="closeDetailModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280;">✕</button>
+            <h2 style="font-size: 20px; font-weight: 700; margin: 0;"><i class="fas fa-image"></i> Detail Absensi</h2>
+            <button type="button" onclick="closeDetailModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280;"><i class="fas fa-times"></i></button>
         </div>
 
         <!-- User & Date Info -->
         <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px;">
                 <div>
-                    <p style="color: #6b7280; margin: 0 0 4px 0; font-size: 12px;">👤 Nama Peserta</p>
+                    <p style="color: #6b7280; margin: 0 0 4px 0; font-size: 12px;"><i class="fas fa-user"></i> Nama Peserta</p>
                     <p id="detailName" style="font-weight: 600; margin: 0;"></p>
                 </div>
                 <div>
-                    <p style="color: #6b7280; margin: 0 0 4px 0; font-size: 12px;">📅 Tanggal</p>
+                    <p style="color: #6b7280; margin: 0 0 4px 0; font-size: 12px;"><i class="fas fa-calendar"></i> Tanggal</p>
                     <p id="detailDate" style="font-weight: 600; margin: 0;"></p>
                 </div>
                 <div>
-                    <p style="color: #6b7280; margin: 0 0 4px 0; font-size: 12px;">⏱️ Jam Masuk</p>
+                    <p style="color: #6b7280; margin: 0 0 4px 0; font-size: 12px;"><i class="fas fa-stopwatch"></i> Jam Masuk</p>
                     <p id="detailTime" style="font-weight: 600; margin: 0; color: var(--primary);"></p>
                 </div>
             </div>
@@ -166,13 +170,13 @@
 
         <!-- Photo Section -->
         <div id="photoSection" style="display: none; margin-bottom: 20px;">
-            <p style="font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">📸 Foto Selfie:</p>
+            <p style="font-size: 14px; font-weight: 600; margin: 0 0 12px 0;"><i class="fas fa-camera"></i> Foto Selfie:</p>
             <img id="detailPhoto" style="width: 100%; border-radius: 8px; max-height: 350px; object-fit: cover;">
         </div>
 
         <!-- Location Section -->
         <div id="locationSection" style="display: none; margin-bottom: 20px;">
-            <p style="font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">📍 Lokasi Keberadaan:</p>
+            <p style="font-size: 14px; font-weight: 600; margin: 0 0 12px 0;"><i class="fas fa-map-marker-alt"></i> Lokasi Keberadaan:</p>
             <div style="background: #f0fdf4; border: 2px solid var(--success); padding: 12px; border-radius: 8px; font-size: 13px;">
                 <div style="margin-bottom: 8px;">
                     <strong style="color: #22c55e;">Latitude:</strong>
@@ -183,7 +187,7 @@
                     <span id="detailLng"></span>
                 </div>
                 <a id="mapLink" href="#" target="_blank" style="display: block; margin-top: 12px; color: var(--primary); font-weight: 600; text-decoration: none;">
-                    🗺️ Buka di Google Maps →
+                    <i class="fas fa-map"></i> Buka di Google Maps <i class="fas fa-external-link-alt"></i>
                 </a>
             </div>
         </div>
@@ -229,4 +233,5 @@
     }
 </script>
 
+</div>
 @endsection

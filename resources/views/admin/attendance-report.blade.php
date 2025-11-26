@@ -3,31 +3,35 @@
 @section('title', 'Laporan Absensi - Admin')
 
 @section('content')
-<!-- Header & Back Button -->
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-    <div>
-        <h1 style="font-size: 32px; font-weight: 700; margin: 0 0 8px 0;">📊 Laporan Absensi</h1>
-        @if (isset($selectedDate))
-            <p style="color: #6b7280; margin: 0;">{{ \Carbon\Carbon::parse($selectedDate)->format('d MMMM Y') }}</p>
-        @elseif (isset($month) && isset($year))
-            <p style="color: #6b7280; margin: 0;">{{ \Carbon\Carbon::createFromDate($year, $month, 1)->format('F Y') }}</p>
-        @endif
-    </div>
-    <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">← Kembali</a>
-</div>
+@include('components.admin-sidebar')
 
-<!-- Report Table -->
-<div class="card">
-    <div class="card-header">
-        <h2 style="font-size: 20px;">📋 Detail Laporan</h2>
+<!-- Main Content -->
+<div style="margin-left: 250px; padding: 24px;">
+    <!-- Header & Back Button -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+            <h1 style="font-size: 32px; font-weight: 700; margin: 0 0 8px 0;"><i class="fas fa-chart-bar"></i> Laporan Absensi</h1>
+            @if (isset($selectedDate))
+                <p style="color: #6b7280; margin: 0;">{{ \Carbon\Carbon::parse($selectedDate)->format('d MMMM Y') }}</p>
+            @elseif (isset($month) && isset($year))
+                <p style="color: #6b7280; margin: 0;">{{ \Carbon\Carbon::createFromDate($year, $month, 1)->format('F Y') }}</p>
+            @endif
+        </div>
+        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">← Kembali</a>
     </div>
-    <div class="card-body" style="overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-            <thead>
-                <tr style="border-bottom: 2px solid #e5e7eb;">
-                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #6b7280; width: 50px;">No</th>
-                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #6b7280;">Nama Peserta</th>
-                    <th style="padding: 12px; text-align: left; font-weight: 600; color: #6b7280;">Tanggal</th>
+
+    <!-- Report Table -->
+    <div class="card">
+        <div class="card-header">
+            <h2 style="font-size: 20px;"><i class="fas fa-list"></i> Detail Laporan</h2>
+        </div>
+        <div class="card-body" style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #e5e7eb;">
+                        <th style="padding: 12px; text-align: left; font-weight: 600; color: #6b7280; width: 50px;">No</th>
+                        <th style="padding: 12px; text-align: left; font-weight: 600; color: #6b7280;">Nama Peserta</th>
+                        <th style="padding: 12px; text-align: left; font-weight: 600; color: #6b7280;">Tanggal</th>
                     <th style="padding: 12px; text-align: left; font-weight: 600; color: #6b7280;">Jam Masuk</th>
                     <th style="padding: 12px; text-align: left; font-weight: 600; color: #6b7280;">Jam Keluar</th>
                     <th style="padding: 12px; text-align: center; font-weight: 600; color: #6b7280;">Status</th>
@@ -64,11 +68,11 @@
                                 @endif
                             ">
                                 @if ($attendance->status == 'present')
-                                    ✅ Hadir
+                                    <i class="fas fa-check-circle"></i> Hadir
                                 @elseif ($attendance->status == 'late')
-                                    ⏰ Terlambat
+                                    <i class="fas fa-clock"></i> Terlambat
                                 @else
-                                    ❌ Absen
+                                    <i class="fas fa-times-circle"></i> Absen
                                 @endif
                             </span>
                         </td>
@@ -76,7 +80,7 @@
                 @empty
                     <tr>
                         <td colspan="6" style="padding: 20px; text-align: center; color: #6b7280;">
-                            📭 Tidak ada data untuk periode ini
+                            <i class="fas fa-inbox"></i> Tidak ada data untuk periode ini
                         </td>
                     </tr>
                 @endforelse
@@ -122,5 +126,6 @@
             @endif
         </div>
     </div>
-</body>
-</html>
+</div>
+
+@endsection

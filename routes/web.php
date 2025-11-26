@@ -37,5 +37,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AttendanceController::class, 'adminDashboard'])->name('admin.dashboard');
     Route::get('/attendance/filter-date', [AttendanceController::class, 'filterByDate'])->name('admin.filterDate');
     Route::get('/attendance/filter-month', [AttendanceController::class, 'filterByMonth'])->name('admin.filterMonth');
+    Route::get('/attendance-report', [AttendanceController::class, 'attendanceReport'])->name('admin.attendance-report');
     Route::get('/user/{userId}/history', [AttendanceController::class, 'userHistory'])->name('admin.userHistory');
+    Route::get('/settings', [AttendanceController::class, 'showSettings'])->name('admin.settings');
+    Route::put('/settings/deadline', [AttendanceController::class, 'updateDeadline'])->name('admin.settings.update-deadline');
+    Route::put('/settings/location', [AttendanceController::class, 'updateLocation'])->name('admin.settings.update-location');
 });

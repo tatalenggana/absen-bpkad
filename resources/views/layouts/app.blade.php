@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Absensi BPKAD Garut')</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #2563eb;
@@ -257,6 +258,14 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin-bottom: 32px;
         }
+        
+        .navbar.admin-hidden {
+            display: none;
+        }
+        
+        body.admin-page {
+            background: #f9fafb;
+        }
 
         .navbar-content {
             max-width: 1200px;
@@ -288,8 +297,8 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
+    <!-- Navbar (Hidden on admin pages) -->
+    <nav class="navbar @if(auth()->check() && auth()->user()->role === 'admin') admin-hidden @endif">
         <div class="navbar-content">
             <div class="navbar-brand">
                 <img src="{{ asset('image/logonav.png') }}" alt="Logo">
@@ -298,11 +307,11 @@
             <div>
                 @auth
                     <div style="display: flex; align-items: center; gap: 16px;">
-                        <span style="font-size: 14px;">👤 {{ Auth::user()->name }}</span>
+                        <span style="font-size: 14px;"> {{ Auth::user()->name }}</span>
                         <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                             @csrf
                             <button type="submit" class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;">
-                                🚪 Logout
+                                 Logout
                             </button>
                         </form>
                     </div>

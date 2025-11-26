@@ -35,7 +35,7 @@ Sistem manajemen absensi modern untuk Program Pelatihan Kerja (PKL) BPKAD Garut 
 
 -   ✅ Nama, Email, Password
 -   ✅ Sekolah/Universitas
--   ✅ Bidang Penempatan (Akuntansi, Sekretaria, Anggaran, Keuangan, Perbendaharaan)
+-   ✅ Bidang Penempatan (Akuntansi, Sekretariat, Anggaran, Keuangan, Perbendaharaan)
 -   ✅ Profile management
 
 ### �📊 Dashboard Admin

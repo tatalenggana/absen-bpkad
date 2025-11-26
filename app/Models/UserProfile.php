@@ -22,7 +22,7 @@ class UserProfile extends Model
     {
         $labels = [
             'akuntansi' => 'Akuntansi',
-            'sekretaria' => 'Sekretaria',
+            'sekretariat' => 'Sekretariat',
             'anggaran' => 'Anggaran',
             'keuangan' => 'Keuangan',
             'perbendaharaan' => 'Perbendaharaan',

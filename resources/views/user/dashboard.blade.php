@@ -4,14 +4,11 @@
 
 @section('content')
 
-<!-- Diary Popup Component -->
-@include('components.bolehdihapuskaloudahbaca')
-
 <!-- Header Card -->
 <div class="card" style="margin-bottom: 24px;">
     <div class="card-header">
         <h2>Dashboard Absensi</h2>
-        <p>Selamat datang, {{ Auth::user()->name }}! 👋</p>
+        <p>Selamat datang, {{ Auth::user()->name }}!</i></p>
     </div>
     <div class="card-body">
         @php $profile = Auth::user()->profile ?? null; @endphp
@@ -32,7 +29,7 @@
 
 @if (session('success'))
     <div class="alert alert-success">
-        <div style="font-size: 20px;">✅</div>
+        <div style="font-size: 20px;"><i class="fas fa-check-circle"></i></div>
         <div>
             <strong>Berhasil!</strong>
             <p style="font-size: 14px; margin-top: 4px;">{{ session('success') }}</p>
@@ -42,7 +39,7 @@
 
 @if (session('error'))
     <div class="alert alert-danger">
-        <div style="font-size: 20px;">⚠️</div>
+        <div style="font-size: 20px;"><i class="fas fa-exclamation-triangle"></i></div>
         <div>
             <strong>Terjadi Kesalahan!</strong>
             <p style="font-size: 14px; margin-top: 4px;">{{ session('error') }}</p>
@@ -53,7 +50,7 @@
 <!-- Check-In Card -->
 <div class="card" style="margin-bottom: 24px;">
     <div class="card-header">
-        <h2 style="font-size: 20px;">📋 Status Absensi Hari Ini</h2>
+        <h2 style="font-size: 20px;"><i class="fas fa-list"></i> Status Absensi Hari Ini</h2>
     </div>
     <div class="card-body">
         @if ($todayAttendance)
@@ -62,22 +59,22 @@
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                     <div style="font-size: 32px;">
                         @if ($todayAttendance->status == 'present')
-                            ✅
+                            <i class="fas fa-check-circle"></i>
                         @elseif ($todayAttendance->status == 'late')
-                            ⏰
+                            <i class="fas fa-clock"></i>
                         @else
-                            ❌
+                            <i class="fas fa-times-circle"></i>
                         @endif
                     </div>
                     <div>
                         <p style="font-size: 12px; color: #6b7280;">Status Absensi</p>
                         <p style="font-size: 18px; font-weight: 700;">
                             @if ($todayAttendance->status == 'present')
-                                ✅ HADIR
+                                <i class="fas fa-check-circle"></i> HADIR
                             @elseif ($todayAttendance->status == 'late')
-                                ⏰ TERLAMBAT
+                                <i class="fas fa-clock"></i> TERLAMBAT
                             @else
-                                ❌ ABSEN
+                                <i class="fas fa-times-circle"></i> ABSEN
                             @endif
                         </p>
                     </div>
@@ -86,14 +83,14 @@
                 <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
                     @if ($todayAttendance->check_in_time)
                         <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                            <span style="color: #6b7280; font-size: 14px;">⏱️ Jam Masuk:</span>
+                            <span style="color: #6b7280; font-size: 14px;"><i class="fas fa-stopwatch"></i> Jam Masuk:</span>
                             <strong style="color: var(--primary);">{{ \Carbon\Carbon::parse($todayAttendance->check_in_time)->format('H:i:s') }}</strong>
                         </div>
                     @endif
 
                     @if ($todayAttendance->check_out_time)
                         <div style="display: flex; justify-content: space-between;">
-                            <span style="color: #6b7280; font-size: 14px;">🚪 Jam Keluar:</span>
+                            <span style="color: #6b7280; font-size: 14px;"><i class="fas fa-door-open"></i> Jam Keluar:</span>
                             <strong style="color: var(--primary);">{{ \Carbon\Carbon::parse($todayAttendance->check_out_time)->format('H:i:s') }}</strong>
                         </div>
                     @endif
@@ -101,14 +98,14 @@
 
                 @if ($todayAttendance->photo_path)
                     <div style="margin-bottom: 12px;">
-                        <p style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">📸 Foto Selfie:</p>
+                        <p style="font-size: 12px; color: #6b7280; margin-bottom: 8px;"><i class="fas fa-camera"></i> Foto Selfie:</p>
                         <img src="{{ asset('storage/' . $todayAttendance->photo_path) }}" style="width: 100%; max-height: 300px; border-radius: 8px; object-fit: cover;">
                     </div>
                 @endif
 
                 @if ($todayAttendance->location_latitude && $todayAttendance->location_longitude)
                     <div style="margin-bottom: 12px;">
-                        <p style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">📍 Lokasi:</p>
+                        <p style="font-size: 12px; color: #6b7280; margin-bottom: 8px;"><i class="fas fa-map-marker-alt"></i> Lokasi:</p>
                         <div style="background: #f0fdf4; border: 1px solid var(--success); padding: 10px; border-radius: 6px; font-size: 13px;">
                             Lat: {{ $todayAttendance->location_latitude }}<br>
                             Lng: {{ $todayAttendance->location_longitude }}
@@ -120,7 +117,7 @@
                     <form method="POST" action="{{ route('attendance.checkOut') }}">
                         @csrf
                         <button type="submit" class="btn btn-primary btn-block" style="margin-top: 12px;">
-                            🚪 Check Out
+                            <i class="fas fa-door-open"></i> Check Out
                         </button>
                     </form>
                 @endif
@@ -128,13 +125,13 @@
         @else
             <!-- Not Yet Checked In -->
             <div style="text-align: center; padding: 20px 0;">
-                <div style="font-size: 48px; margin-bottom: 12px;">📋</div>
+                <div style="font-size: 48px; margin-bottom: 12px;"><i class="fas fa-list"></i></div>
                 <p style="font-size: 14px; color: #6b7280; margin-bottom: 12px;">Anda belum melakukan absensi hari ini</p>
                 <p style="font-size: 12px; color: var(--warning); background: #fef3c7; padding: 12px; border-radius: 8px; margin-bottom: 16px; border-left: 3px solid var(--warning);">
-                    <strong>⏰ Perhatian:</strong> Absensi hanya bisa dilakukan hingga pukul 08:00. Setelah itu, Anda akan tercatat sebagai TERLAMBAT.
+                    <strong><i class="fas fa-clock"></i> Perhatian:</strong> Absensi hanya bisa dilakukan hingga pukul 08:00. Setelah itu, Anda akan tercatat sebagai TERLAMBAT.
                 </p>
                 <button type="button" onclick="openCheckInModal()" class="btn btn-primary btn-block">
-                    ✅ Mulai Check-In
+                    <i class="fas fa-check-circle"></i> Mulai Check-In
                 </button>
             </div>
         @endif
@@ -144,7 +141,7 @@
 <!-- Statistics Card -->
 <div class="card" style="margin-bottom: 24px;">
     <div class="card-header">
-        <h2 style="font-size: 20px;">📊 Statistik Bulan Ini</h2>
+        <h2 style="font-size: 20px;"><i class="fas fa-chart-bar"></i> Statistik Bulan Ini</h2>
     </div>
     <div class="card-body">
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
@@ -167,7 +164,7 @@
 <!-- Riwayat Absensi -->
 <div class="card">
     <div class="card-header">
-        <h2 style="font-size: 20px;">📅 Riwayat Absensi Bulan Ini</h2>
+        <h2 style="font-size: 20px;"><i class="fas fa-calendar"></i> Riwayat Absensi Bulan Ini</h2>
     </div>
     <div class="card-body" style="overflow-x: auto;">
         <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
@@ -204,11 +201,11 @@
                                 @endif
                             ">
                                 @if ($attendance->status == 'present')
-                                    ✅ Hadir
+                                    <i class="fas fa-check-circle"></i> Hadir
                                 @elseif ($attendance->status == 'late')
-                                    ⏰ Terlambat
+                                    <i class="fas fa-clock"></i> Terlambat
                                 @else
-                                    ❌ Absen
+                                    <i class="fas fa-times-circle"></i> Absen
                                 @endif
                             </span>
                         </td>
@@ -228,7 +225,7 @@
 <!-- Check-In Modal -->
 <div id="checkInModal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); z-index: 50; flex-items: center; justify-content: center;">
     <div style="background: white; border-radius: 12px; padding: 24px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;">
-        <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 6px;">📸 Check-In PKL/Magang</h2>
+        <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 6px;"><i class="fas fa-camera"></i> Check-In PKL/Magang</h2>
         <p style="color: #6b7280; margin-bottom: 20px; font-size: 14px;">Lengkapi formulir di bawah ini untuk melakukan check-in</p>
 
         <form id="checkInForm" method="POST" action="{{ route('attendance.checkIn') }}" enctype="multipart/form-data" style="space-y: 16px;">
@@ -237,7 +234,7 @@
             <!-- Camera Section -->
             <div class="form-group">
                 <label class="form-label">
-                    <span class="icon">📸</span>
+                    <span class="icon"><i class="fas fa-camera"></i></span>
                     Foto Selfie
                     <span class="required">*</span>
                 </label>
@@ -247,10 +244,10 @@
                         <video id="videoPreview" style="width: 100%; border-radius: 6px; margin-bottom: 12px;"></video>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                             <button type="button" id="capturePhotoBtn" onclick="capturePhoto()" class="btn btn-success" style="background: linear-gradient(135deg, var(--success) 0%, #059669 100%);">
-                                ✓ Ambil Foto
+                                <i class="fas fa-check"></i> Ambil Foto
                             </button>
                             <button type="button" id="closeCameraBtn" onclick="closeCamera()" class="btn btn-secondary">
-                                ✕ Batal
+                                <i class="fas fa-times"></i> Batal
                             </button>
                         </div>
                     </div>
@@ -260,10 +257,10 @@
                         <img id="photoPreview" style="width: 100%; border-radius: 6px; margin-bottom: 12px; max-height: 300px; object-fit: cover;">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                             <button type="button" id="saveFotoBtn" onclick="saveFoto()" class="btn btn-primary" style="background: linear-gradient(135deg, var(--primary) 0%, #1e40af 100%);">
-                                ✓ Pakai Foto Ini
+                                <i class="fas fa-check"></i> Pakai Foto Ini
                             </button>
                             <button type="button" id="retakeFotoBtn" onclick="startCamera()" class="btn btn-secondary">
-                                🔄 Ambil Ulang
+                                <i class="fas fa-sync"></i> Ambil Ulang
                             </button>
                         </div>
                     </div>
@@ -271,7 +268,7 @@
                     <!-- Start Button -->
                     <div id="startView">
                         <button type="button" id="startCameraBtn" onclick="startCamera()" class="btn btn-primary btn-block">
-                            📷 Ambil Foto
+                            <i class="fas fa-camera"></i> Ambil Foto
                         </button>
                     </div>
 
@@ -279,11 +276,11 @@
                     <div id="lockedFotoView" style="display: none;">
                         <img id="lockedPhotoPreview" style="width: 100%; border-radius: 6px; margin-bottom: 12px; max-height: 300px; object-fit: cover;">
                         <div style="text-align: center; padding: 12px; background: #f0fdf4; border: 2px solid var(--success); border-radius: 8px; margin-bottom: 12px;">
-                            <p style="margin: 0; color: #22c55e; font-weight: 600;">✅ Foto Sudah Disimpan</p>
+                            <p style="margin: 0; color: #22c55e; font-weight: 600;"><i class="fas fa-check-circle"></i> Foto Sudah Disimpan</p>
                             <p style="margin: 4px 0 0 0; font-size: 12px; color: #16a34a;">Ambil foto baru untuk mengubah</p>
                         </div>
                         <button type="button" onclick="resetPhotoForRetake()" class="btn btn-secondary btn-block">
-                            🔄 Ambil Foto Baru
+                            <i class="fas fa-sync"></i> Ambil Foto Baru
                         </button>
                     </div>
                 </div>
@@ -296,12 +293,12 @@
             <!-- Location Section -->
             <div class="form-group">
                 <label class="form-label">
-                    <span class="icon">📍</span>
+                    <span class="icon"><i class="fas fa-map-marker-alt"></i></span>
                     Lokasi Keberadaan
                     <span class="required">*</span>
                 </label>
                 <button type="button" onclick="getLocation()" class="btn btn-secondary btn-block">
-                    📡 Ambil Lokasi Saya
+                    <i class="fas fa-location-arrow"></i> Ambil Lokasi Saya
                 </button>
                 <small class="form-hint">Pastikan GPS/lokasi di perangkat Anda aktif</small>
                 <div id="locationStatus" style="display: none; margin-top: 12px; padding: 12px; background: #f0fdf4; border: 2px solid var(--success); border-radius: 8px; font-size: 13px;"></div>
@@ -313,7 +310,7 @@
             <!-- Notes -->
             <div class="form-group">
                 <label class="form-label">
-                    <span class="icon">📝</span>
+                    <span class="icon"><i class="fas fa-pen"></i></span>
                     Catatan (Opsional)
                 </label>
                 <textarea name="notes" class="form-control" rows="3" placeholder="Contoh: Sehat, siap bekerja, kondisi baik"></textarea>
@@ -328,10 +325,10 @@
             <!-- Buttons -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                 <button type="button" onclick="closeCheckInModal()" class="btn btn-secondary">
-                    ✕ Batal
+                    <i class="fas fa-times"></i> Batal
                 </button>
                 <button type="submit" class="btn btn-primary" id="submitBtn">
-                    ✅ Konfirmasi Check-In
+                    <i class="fas fa-check-circle"></i> Konfirmasi Check-In
                 </button>
             </div>
         </form>
@@ -387,10 +384,10 @@
                     document.getElementById('photoView').style.display = 'none';
                 })
                 .catch(err => {
-                    alert('❌ Tidak bisa akses kamera: ' + err.message);
+                    alert('[ERROR] Tidak bisa akses kamera: ' + err.message);
                 });
         } else {
-            alert('❌ Browser Anda tidak support akses kamera');
+            alert('[ERROR] Browser Anda tidak support akses kamera');
         }
     }
 
@@ -455,11 +452,11 @@
     function getLocation() {
         const btn = event.target;
         if (!navigator.geolocation) {
-            alert('❌ Browser Anda tidak support geolocation');
+            alert('[ERROR] Browser Anda tidak support geolocation');
             return;
         }
 
-        btn.innerHTML = '⏳ Mengambil lokasi...';
+        btn.innerHTML = '<i class="fas fa-hourglass-end"></i> Mengambil lokasi...';
         btn.disabled = true;
         btn.style.opacity = '0.6';
 
@@ -476,28 +473,28 @@
                 const isInRange = distance <= OFFICE_RADIUS;
                 
                 let statusHTML = `
-                    ✅ <strong>Lokasi Berhasil Didapat!</strong><br>
+                    <i class="fas fa-check-circle"></i> <strong>Lokasi Berhasil Didapat!</strong><br>
                     Lat: ${lat.toFixed(6)}<br>
                     Lng: ${lon.toFixed(6)}<br>
-                    📏 Jarak dari kantor: ${Math.round(distance)}m
+                    <i class="fas fa-ruler"></i> Jarak dari kantor: ${Math.round(distance)}m
                 `;
                 
                 if (!isInRange) {
-                    statusHTML += `<br><span style="color: #dc2626; font-weight: 600;">⚠️ PERINGATAN: Lokasi terlalu jauh! (Max: ${OFFICE_RADIUS}m)</span>`;
+                    statusHTML += `<br><span style="color: #dc2626; font-weight: 600;"><i class="fas fa-exclamation-triangle"></i> PERINGATAN: Lokasi terlalu jauh! (Max: ${OFFICE_RADIUS}m)</span>`;
                 }
                 
                 document.getElementById('locationStatus').style.display = 'block';
                 document.getElementById('locationStatus').innerHTML = statusHTML;
                 
-                btn.innerHTML = '✅ Lokasi Sudah Didapat';
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Lokasi Sudah Didapat';
                 btn.style.background = isInRange 
                     ? 'linear-gradient(135deg, var(--success) 0%, #059669 100%)' 
                     : 'linear-gradient(135deg, var(--warning) 0%, #d97706 100%)';
                 btn.style.opacity = '1';
             },
             function(error) {
-                alert('❌ Gagal mendapat lokasi: ' + error.message);
-                btn.innerHTML = '📡 Ambil Lokasi Saya';
+                alert('[ERROR] Gagal mendapat lokasi: ' + error.message);
+                btn.innerHTML = '<i class="fas fa-location-arrow"></i> Ambil Lokasi Saya';
                 btn.disabled = false;
                 btn.style.opacity = '1';
             }
@@ -524,13 +521,13 @@
         
         if (!photoData) {
             e.preventDefault();
-            alert('⚠️ Mohon ambil foto terlebih dahulu!');
+            alert('<i class="fas fa-exclamation-circle"></i> Mohon ambil foto terlebih dahulu!');
             return false;
         }
         
         if (!lat || !lng) {
             e.preventDefault();
-            alert('⚠️ Mohon ambil lokasi Anda terlebih dahulu!');
+            alert('<i class="fas fa-exclamation-circle"></i> Mohon ambil lokasi Anda terlebih dahulu!');
             return false;
         }
 
@@ -538,7 +535,7 @@
         const distance = calculateDistance(OFFICE_LAT, OFFICE_LNG, parseFloat(lat), parseFloat(lng));
         if (distance > OFFICE_RADIUS) {
             e.preventDefault();
-            alert(`⚠️ Lokasi Anda terlalu jauh dari kantor!\n\nJarak: ${Math.round(distance)}m\nBatas maksimal: ${OFFICE_RADIUS}m`);
+            alert(`<i class="fas fa-exclamation-circle"></i> Lokasi Anda terlalu jauh dari kantor!\n\nJarak: ${Math.round(distance)}m\nBatas maksimal: ${OFFICE_RADIUS}m`);
             return false;
         }
 

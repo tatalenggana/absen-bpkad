@@ -42,17 +42,17 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="bg-white p-8 rounded-lg shadow-lg">
-                <h3 class="text-2xl font-bold text-blue-600 mb-4">✅ Check-In/Out</h3>
+                <h3 class="text-2xl font-bold text-blue-600 mb-4"><i class="fas fa-check-circle"></i> Check-In/Out</h3>
                 <p class="text-gray-700">Catat waktu masuk dan pulang dengan akurat. Sistem otomatis mendeteksi keterlambatan setelah jam 08:00 pagi.</p>
             </div>
 
             <div class="bg-white p-8 rounded-lg shadow-lg">
-                <h3 class="text-2xl font-bold text-green-600 mb-4">📊 Dashboard Admin</h3>
+                <h3 class="text-2xl font-bold text-green-600 mb-4"><i class="fas fa-chart-bar"></i> Dashboard Admin</h3>
                 <p class="text-gray-700">Pantau kehadiran seluruh karyawan secara real-time dengan filter berdasarkan tanggal dan bulan.</p>
             </div>
 
             <div class="bg-white p-8 rounded-lg shadow-lg">
-                <h3 class="text-2xl font-bold text-purple-600 mb-4">🔐 Keamanan</h3>
+                <h3 class="text-2xl font-bold text-purple-600 mb-4"><i class="fas fa-lock"></i> Keamanan</h3>
                 <p class="text-gray-700">Sistem autentikasi yang aman dengan pemisahan role admin dan karyawan.</p>
             </div>
         </div>

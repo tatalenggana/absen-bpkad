@@ -71,7 +71,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6|confirmed',
             'school_name' => 'required|string|max:255',
-            'division' => 'required|in:akuntansi,sekretaria,anggaran,keuangan,perbendaharaan',
+            'division' => 'required|in:akuntansi,sekretariat,anggaran,keuangan,perbendaharaan',
         ]);
 
         $user = User::create([

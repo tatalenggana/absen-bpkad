@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
         UserProfile::create([
             'user_id' => $user2->id,
             'school_name' => 'SMK Negeri 2 Garut',
-            'division' => 'sekretaria',
+            'division' => 'sekretariat',
         ]);
 
         $user3 = User::create([

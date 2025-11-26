@@ -76,7 +76,7 @@ class AttendanceController extends Controller
     return view('user.dashboard', [
         'todayAttendance' => $todayAttendance,
         'stats' => $stats,
-        'monthlyAttendance' => $monthAttendances,  // ← View pakai ini
+        'monthlyAttendance' => $monthAttendances,  // View pakai ini
     ]);
 }
 
@@ -116,7 +116,7 @@ class AttendanceController extends Controller
         $distance = $this->calculateDistance($officeLatitude, $officeLongitude, $userLatitude, $userLongitude);
         
         if ($distance > $radiusMeters) {
-            return back()->with('error', "❌ Lokasi Anda terlalu jauh dari kantor! Jarak: " . round($distance) . "m (Max: {$radiusMeters}m)");
+            return back()->with('error', "[ERROR] Lokasi Anda terlalu jauh dari kantor! Jarak: " . round($distance) . "m (Max: {$radiusMeters}m)");
         }
 
         // Check apakah masih dalam jam absensi (sebelum jam 8 pagi)
@@ -138,7 +138,7 @@ class AttendanceController extends Controller
                 $photoData = base64_decode($base64, true);
                 
                 if ($photoData === false) {
-                    return back()->with('error', '❌ Format foto tidak valid!');
+                    return back()->with('error', '[ERROR] Format foto tidak valid!');
                 }
                 
                 // Create directory if not exists
@@ -153,7 +153,7 @@ class AttendanceController extends Controller
                 file_put_contents(storage_path('app/public/' . $photoPath), $photoData);
             } catch (\Exception $e) {
                 \Log::error('Foto simpan error: ' . $e->getMessage());
-                return back()->with('error', '❌ Gagal menyimpan foto. Silakan coba lagi.');
+                return back()->with('error', '[ERROR] Gagal menyimpan foto. Silakan coba lagi.');
             }
         }
 
@@ -176,7 +176,7 @@ class AttendanceController extends Controller
             return back()->with('success', $message);
         } catch (\Exception $e) {
             \Log::error('Attendance create error: ' . $e->getMessage());
-            return back()->with('error', '❌ Gagal menyimpan absensi. Silakan coba lagi.');
+            return back()->with('error', '[ERROR] Gagal menyimpan absensi. Silakan coba lagi.');
         }
     }
 
@@ -210,27 +210,57 @@ class AttendanceController extends Controller
     /**
      * Admin Dashboard - View all attendances
      */
-    public function adminDashboard()
+    public function adminDashboard(Request $request)
     {
-        $attendances = Attendance::with('user')
+        $division = $request->get('division', '');
+        
+        // Get all users query
+        $usersQuery = \App\Models\User::where('role', 'user');
+        
+        // Get today's attendances query
+        $todayQuery = Attendance::whereDate('date', now()->toDateString());
+        
+        // Get today's late attendances query
+        $lateQuery = Attendance::whereDate('date', now()->toDateString())->where('status', 'late');
+        
+        // Apply division filter if selected
+        if ($division) {
+            $usersQuery->whereHas('profile', function ($q) use ($division) {
+                $q->where('division', $division);
+            });
+            
+            $todayQuery->whereHas('user.profile', function ($q) use ($division) {
+                $q->where('division', $division);
+            });
+            
+            $lateQuery->whereHas('user.profile', function ($q) use ($division) {
+                $q->where('division', $division);
+            });
+        }
+        
+        $stats = [
+            'totalUsers' => $usersQuery->count(),
+            'todayAttendances' => $todayQuery->count(),
+            'todayLate' => $lateQuery->count(),
+        ];
+        
+        // Get all attendances with user data for table
+        $attendancesQuery = Attendance::with('user.profile')
             ->orderBy('date', 'desc')
-            ->orderBy('check_in_time', 'desc')
-            ->paginate(50);
-
-        // Get statistics
-        $totalUsers = \App\Models\User::where('role', 'user')->count();
-        $todayAttendances = Attendance::whereDate('date', now()->toDateString())->count();
-        $todayLate = Attendance::whereDate('date', now()->toDateString())
-            ->where('status', 'late')
-            ->count();
-
-        return view('admin.dashboard', [
+            ->orderBy('check_in_time', 'desc');
+        
+        if ($division) {
+            $attendancesQuery->whereHas('user.profile', function ($q) use ($division) {
+                $q->where('division', $division);
+            });
+        }
+        
+        $attendances = $attendancesQuery->paginate(15);
+        
+        return view('admin.dashboard-new', [
+            'stats' => $stats,
             'attendances' => $attendances,
-            'stats' => [
-                'totalUsers' => $totalUsers,
-                'todayAttendances' => $todayAttendances,
-                'todayLate' => $todayLate,
-            ],
+            'selectedDivision' => $division,
         ]);
     }
 
@@ -309,5 +339,131 @@ class AttendanceController extends Controller
         ];
 
         return view('user.profile', ['stats' => $stats]);
+    }
+
+    /**
+     * Settings Page
+     */
+    public function showSettings()
+    {
+        return view('admin.settings-new', [
+            'deadline' => env('CHECK_IN_DEADLINE', '09:00'),
+            'latitude' => env('OFFICE_LATITUDE', '-7.202507'),
+            'longitude' => env('OFFICE_LONGITUDE', '107.890626'),
+            'radius' => env('OFFICE_RADIUS_METERS', '500'),
+            'address' => env('OFFICE_ADDRESS', 'SMKN 1 Garut'),
+        ]);
+    }
+
+    /**
+     * Attendance Report Page
+     */
+    public function attendanceReport(Request $request)
+    {
+        $division = $request->get('division', '');
+        $date = $request->get('date', '');
+        
+        $query = Attendance::with('user.profile')
+            ->orderBy('date', 'desc');
+        
+        if ($division) {
+            $query->whereHas('user.profile', function ($q) use ($division) {
+                $q->where('division', $division);
+            });
+        }
+        
+        if ($date) {
+            $query->whereDate('date', $date);
+        }
+        
+        $attendances = $query->paginate(20);
+
+        return view('admin.attendance-report-new', [
+            'attendances' => $attendances,
+        ]);
+    }
+    /**
+     * Update Deadline
+     */
+    public function updateDeadline(Request $request)
+    {
+        $validated = $request->validate([
+            'check_in_deadline' => 'required|date_format:H:i',
+        ]);
+        
+        try {
+            // Update .env file
+            $envPath = base_path('.env');
+            $envContent = file_get_contents($envPath);
+            
+            // Replace or add CHECK_IN_DEADLINE
+            if (preg_match('/^CHECK_IN_DEADLINE=/m', $envContent)) {
+                $envContent = preg_replace(
+                    '/^CHECK_IN_DEADLINE=.*/m',
+                    'CHECK_IN_DEADLINE=' . $validated['check_in_deadline'],
+                    $envContent
+                );
+            } else {
+                $envContent .= "\nCHECK_IN_DEADLINE=" . $validated['check_in_deadline'];
+            }
+            
+            file_put_contents($envPath, $envContent);
+            
+            // Clear config cache
+            \Artisan::call('config:clear');
+            
+            return back()->with('success_deadline', 'Jam absensi berhasil diperbarui menjadi ' . $validated['check_in_deadline']);
+        } catch (\Exception $e) {
+            \Log::error('Update deadline error: ' . $e->getMessage());
+            return back()->with('error', 'Gagal mengupdate jam absensi: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Update Location
+     */
+    public function updateLocation(Request $request)
+    {
+        $validated = $request->validate([
+            'office_latitude' => 'required|numeric|between:-90,90',
+            'office_longitude' => 'required|numeric|between:-180,180',
+            'office_radius' => 'required|numeric|min:1',
+            'office_address' => 'required|string|max:255',
+        ]);
+        
+        try {
+            $envPath = base_path('.env');
+            $envContent = file_get_contents($envPath);
+            
+            // Update each env variable
+            $replacements = [
+                'OFFICE_LATITUDE' => $validated['office_latitude'],
+                'OFFICE_LONGITUDE' => $validated['office_longitude'],
+                'OFFICE_RADIUS_METERS' => $validated['office_radius'],
+                'OFFICE_ADDRESS' => '"' . $validated['office_address'] . '"',
+            ];
+            
+            foreach ($replacements as $key => $value) {
+                if (preg_match('/^' . $key . '=/m', $envContent)) {
+                    $envContent = preg_replace(
+                        '/^' . $key . '=.*/m',
+                        $key . '=' . $value,
+                        $envContent
+                    );
+                } else {
+                    $envContent .= "\n" . $key . "=" . $value;
+                }
+            }
+            
+            file_put_contents($envPath, $envContent);
+            
+            // Clear config cache
+            \Artisan::call('config:clear');
+            
+            return back()->with('success_location', 'Lokasi absensi berhasil diperbarui! Alamat: ' . $validated['office_address']);
+        } catch (\Exception $e) {
+            \Log::error('Update location error: ' . $e->getMessage());
+            return back()->with('error', 'Gagal mengupdate lokasi: ' . $e->getMessage());
+        }
     }
 }
