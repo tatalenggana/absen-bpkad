@@ -110,4 +110,4 @@ php artisan serve
 
 ---
 
-<h2 id="pembuat"\>🧍 Pembuat</h2\>
+<h2 id="pembuat"\>By Gista Nuru Arifah Putri Lenggana</h2\>
