@@ -478,28 +478,203 @@
             .top-header {
                 padding: 20px 15px;
             }
+
+            .table {
+                font-size: 13px;
+            }
+
+            .table th, .table td {
+                padding: 10px 8px !important;
+            }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 600px) {
             .sidebar {
-                display: none;
+                position: fixed;
+                left: -200px;
+                width: 200px;
+                transition: left 0.3s ease;
+                z-index: 2000;
+            }
+
+            .sidebar.active {
+                left: 0;
             }
 
             .main-content {
                 margin-left: 0;
             }
 
-            .filter-section form {
-                flex-direction: column;
+            .top-header {
+                padding: 15px 12px;
+                margin-bottom: 15px;
             }
 
-            .form-control {
+            .top-header h1 {
+                font-size: 22px;
+                margin-bottom: 4px;
+            }
+
+            .top-header p {
+                font-size: 12px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 0 12px;
+                margin-bottom: 15px;
+            }
+
+            .stat-card {
+                padding: 15px;
+                gap: 10px;
+            }
+
+            .stat-card i {
+                font-size: 24px;
+            }
+
+            .stat-number {
+                font-size: 28px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+            }
+
+            .filter-section {
+                margin: 0 12px 15px 12px;
+            }
+
+            .filter-section form {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .form-control, .btn {
                 width: 100%;
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+
+            .table-container {
+                margin: 0 12px;
+                overflow-x: auto;
+            }
+
+            .table {
+                font-size: 12px;
+                min-width: 600px;
+            }
+
+            .table th, .table td {
+                padding: 8px 6px !important;
+                white-space: nowrap;
+            }
+
+            .btn-primary, .btn-secondary {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+
+            .table-badge {
+                padding: 3px 6px;
+                font-size: 11px;
+            }
+
+            /* Modal responsive */
+            #detailModal {
+                padding: 12px !important;
+            }
+
+            #detailModal > div {
+                width: 95% !important;
+                max-width: 100% !important;
+                max-height: 95vh !important;
+                padding: 16px !important;
+            }
+
+            #detailModal > div h2 {
+                font-size: 18px !important;
+            }
+
+            #detailModal > div .card-header {
+                padding: 12px !important;
+            }
+
+            #detailPhoto {
+                max-height: 300px !important;
+            }
+
+            /* Toggle sidebar button */
+            .sidebar-toggle {
+                display: block;
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background: var(--primary);
+                color: white;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;
+                z-index: 1500;
+                box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+            }
+
+            .sidebar-toggle:active {
+                transform: scale(0.95);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 180px;
+            }
+
+            .top-header {
+                padding: 12px 10px;
+            }
+
+            .top-header h1 {
+                font-size: 20px;
+            }
+
+            .stats-grid {
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 12px;
+            }
+
+            .stat-number {
+                font-size: 24px;
+            }
+
+            .table {
+                font-size: 11px;
+            }
+
+            .table th, .table td {
+                padding: 6px 4px !important;
             }
 
             .btn {
-                width: 100%;
-                justify-content: center;
+                padding: 6px 8px;
+                font-size: 10px;
+            }
+
+            .filter-section form {
+                gap: 6px;
+            }
+
+            .form-control {
+                font-size: 13px;
+                padding: 6px 8px;
             }
         }
     </style>
@@ -543,6 +718,55 @@
         @yield('content')
     </div>
 
+    <!-- Mobile Menu Toggle Button -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Mobile sidebar toggle
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+
+        sidebarToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sidebar.classList.toggle('active');
+        });
+
+        // Close sidebar when clicking main content on mobile
+        mainContent.addEventListener('click', function() {
+            if (window.innerWidth <= 600) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Close sidebar when clicking sidebar links
+        document.querySelectorAll('.sidebar-nav a').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 600) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        });
+
+        // Close sidebar when window is resized above mobile breakpoint
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 600) {
+                sidebar.classList.remove('active');
+                sidebarToggle.style.display = 'none';
+            } else {
+                sidebarToggle.style.display = 'block';
+            }
+        });
+
+        // Initial check on page load
+        window.addEventListener('load', function() {
+            if (window.innerWidth > 600) {
+                sidebarToggle.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

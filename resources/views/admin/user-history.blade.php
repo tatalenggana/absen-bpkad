@@ -171,7 +171,7 @@
         <!-- Photo Section -->
         <div id="photoSection" style="display: none; margin-bottom: 20px;">
             <p style="font-size: 14px; font-weight: 600; margin: 0 0 12px 0;"><i class="fas fa-camera"></i> Foto Selfie:</p>
-            <img id="detailPhoto" style="width: 100%; border-radius: 8px; max-height: 350px; object-fit: cover;">
+            <img id="detailPhoto" style="width: 100%; border-radius: 8px; max-height: 350px; object-fit: cover; cursor: pointer;" onclick="openPhotoFullscreen(this.src)">
         </div>
 
         <!-- Location Section -->
@@ -208,7 +208,7 @@
         // Photo
         if (photoPath && photoPath.trim()) {
             document.getElementById('photoSection').style.display = 'block';
-            document.getElementById('detailPhoto').src = '{{ asset("storage") }}/' + photoPath;
+            document.getElementById('detailPhoto').src = '/storage/' + photoPath;
         } else {
             document.getElementById('photoSection').style.display = 'none';
         }
@@ -231,7 +231,26 @@
     function closeDetailModal() {
         document.getElementById('detailModal').style.display = 'none';
     }
-</script>
+    
+    function openPhotoFullscreen(photoSrc) {
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0, 0, 0, 0.9); z-index: 100; display: flex; align-items: center; justify-content: center;';
+        modal.innerHTML = `
+            <div style="position: relative; width: 90%; height: 90%; display: flex; align-items: center; justify-content: center;">
+                <img src="${photoSrc}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                <button type="button" onclick="this.parentElement.parentElement.remove()" style="position: absolute; top: 20px; right: 20px; background: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 24px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-times"></i>
+                </button>
+                <a href="${photoSrc}" download style="position: absolute; bottom: 20px; right: 20px; background: var(--primary); color: white; padding: 10px 16px; border-radius: 6px; cursor: pointer; text-decoration: none; font-weight: 600;">
+                    <i class="fas fa-download"></i> Download
+                </a>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.onclick = function(e) {
+            if (e.target === this) this.remove();
+        }
+    }</script>
 
 </div>
 @endsection
