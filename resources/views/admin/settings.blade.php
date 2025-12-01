@@ -1,106 +1,209 @@
-@extends('layouts.app')
-
-@section('title', 'Pengaturan Admin - Absensi BPKAD Garut')
+@extends('admin.layout')
 
 @section('content')
-@include('components.admin-sidebar')
-
-<div style="margin-left: 250px; padding: 24px;">
-    <!-- Header -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <div>
-            <h1 style="font-size: 32px; font-weight: 700; margin: 0 0 8px 0;"><i class="fas fa-cog"></i> Pengaturan Sistem</h1>
-            <p style="color: #6b7280; margin: 0;">Atur deadline absensi dan konfigurasi sistem</p>
-        </div>
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">← Kembali</a>
-    </div>
-
-    <!-- Success/Error Messages -->
-    @if (session('success'))
-        <div class="alert alert-success">
-            <div style="font-size: 20px;"><i class="fas fa-check-circle"></i></div>
-            <div>
-                <strong>Berhasil!</strong>
-                <p style="font-size: 14px; margin-top: 4px;">{{ session('success') }}</p>
-            </div>
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="alert alert-danger">
-            <div style="font-size: 20px;"><i class="fas fa-exclamation-triangle"></i></div>
-            <div>
-                <strong>Terjadi Kesalahan!</strong>
-                <p style="font-size: 14px; margin-top: 4px;">{{ session('error') }}</p>
-            </div>
-        </div>
-    @endif
-
-    <!-- Settings Cards -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px;">
-        <!-- Deadline Absensi Card -->
-        <div class="card">
-            <div class="card-header">
-                <h2 style="font-size: 18px; margin: 0;"><i class="fas fa-clock"></i> Deadline Check-In</h2>
-                <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Atur jam deadline untuk check-in pagi</p>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="{{ route('admin.update-deadline') }}">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-clock"></i> Jam Deadline
-                        </label>
-                        <input type="time" name="check_in_deadline" value="{{ env('CHECK_IN_DEADLINE', '08:00') }}" class="form-control" required>
-                        <small class="form-hint">Format: HH:MM (Contoh: 08:00, 09:30)</small>
-                    </div>
-
-                    <div style="background: #fef3c7; border-left: 3px solid var(--warning); padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 13px;">
-                        <p style="margin: 0;"><strong><i class="fas fa-info-circle"></i> Catatan:</strong></p>
-                        <p style="margin: 4px 0 0 0;">Absensi sebelum jam ini → <strong>HADIR</strong></p>
-                        <p style="margin: 4px 0 0 0;">Absensi setelah jam ini → <strong>TERLAMBAT</strong></p>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <i class="fas fa-save"></i> Simpan Perubahan
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Info Card -->
-        <div class="card">
-            <div class="card-header">
-                <h2 style="font-size: 18px; margin: 0;"><i class="fas fa-info-circle"></i> Informasi Sistem</h2>
-                <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0 0;">Status dan konfigurasi sistem</p>
-            </div>
-            <div class="card-body">
-                <div style="space-y: 12px;">
-                    <div style="display: flex; justify-content: space-between; padding: 12px; background: #f3f4f6; border-radius: 6px; margin-bottom: 8px;">
-                        <span style="color: #6b7280; font-size: 14px;">Environment</span>
-                        <strong style="color: var(--primary);">{{ env('APP_ENV', 'production') }}</strong>
-                    </div>
-
-                    <div style="display: flex; justify-content: space-between; padding: 12px; background: #f3f4f6; border-radius: 6px; margin-bottom: 8px;">
-                        <span style="color: #6b7280; font-size: 14px;">APP URL</span>
-                        <strong style="color: var(--primary);">{{ env('APP_URL', 'http://localhost') }}</strong>
-                    </div>
-
-                    <div style="display: flex; justify-content: space-between; padding: 12px; background: #f3f4f6; border-radius: 6px; margin-bottom: 8px;">
-                        <span style="color: #6b7280; font-size: 14px;">Database</span>
-                        <strong style="color: var(--primary);">{{ env('DB_CONNECTION', 'mysql') }}</strong>
-                    </div>
-
-                    <div style="display: flex; justify-content: space-between; padding: 12px; background: #f3f4f6; border-radius: 6px;">
-                        <span style="color: #6b7280; font-size: 14px;">Timezone</span>
-                        <strong style="color: var(--primary);">{{ env('APP_TIMEZONE', 'UTC') }}</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- Header -->
+<div class="top-header">
+    <div>
+        <h1>Pengaturan</h1>
+        <p>Kelola konfigurasi sistem absensi</p>
     </div>
 </div>
+
+<!-- Content -->
+<div style="padding: 25px; padding-top: 0;">
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="fas fa-clock"></i>
+            <div class="stat-number">{{ $deadline ?? '09:00' }}</div>
+            <div class="stat-label">Batas Check-in</div>
+        </div>
+        <div class="stat-card success">
+            <i class="fas fa-map-marker-alt"></i>
+            <div class="stat-number">Online</div>
+            <div class="stat-label">Lokasi Aktif</div>
+        </div>
+        <div class="stat-card warning">
+            <i class="fas fa-server"></i>
+            <div class="stat-number">{{ config('app.env') }}</div>
+            <div class="stat-label">Environment</div>
+        </div>
+    </div>
+
+    <!-- Settings Form - Deadline -->
+    <div class="filter-section" style="margin-bottom: 25px;">
+        <h3 style="margin-bottom: 20px; color: var(--text-primary);">⏰ Pengaturan Waktu Check-in</h3>
+        <form method="POST" action="{{ route('admin.settings.update-deadline') }}">
+            @csrf
+            @method('PUT')
+            <div style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
+                <div style="flex: 1; max-width: 200px;">
+                    <label for="check_in_deadline" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary);">
+                        Waktu Batas Check-in
+                    </label>
+                    <input 
+                        type="time" 
+                        id="check_in_deadline" 
+                        name="check_in_deadline" 
+                        class="form-control" 
+                        value="{{ $deadline ?? '09:00' }}"
+                        required
+                    >
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Simpan
+                </button>
+            </div>
+            @if($errors->has('check_in_deadline'))
+                <div style="color: var(--danger); margin-top: 10px; font-size: 14px;">
+                    <i class="fas fa-exclamation-circle"></i> {{ $errors->first('check_in_deadline') }}
+                </div>
+            @endif
+            @if(session('success_deadline'))
+                <div style="color: var(--success); margin-top: 10px; font-size: 14px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-radius: 6px;">
+                    <i class="fas fa-check-circle"></i> {{ session('success_deadline') }}
+                </div>
+            @endif
+        </form>
+    </div>
+
+    <!-- Settings Form - Location -->
+    <div class="filter-section" style="margin-bottom: 25px;">
+        <h3 style="margin-bottom: 20px; color: var(--text-primary);">📍 Pengaturan Lokasi Absensi</h3>
+        <form method="POST" action="{{ route('admin.settings.update-location') }}">
+            @csrf
+            @method('PUT')
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label for="office_latitude" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary);">
+                        Latitude
+                    </label>
+                    <input 
+                        type="number" 
+                        id="office_latitude" 
+                        name="office_latitude" 
+                        class="form-control" 
+                        step="0.000001"
+                        value="{{ $latitude ?? '-7.202507' }}"
+                        required
+                        placeholder="-7.202507"
+                    >
+                    <small style="color: var(--text-secondary); margin-top: 4px; display: block;">Contoh: -7.202507</small>
+                </div>
+                <div>
+                    <label for="office_longitude" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary);">
+                        Longitude
+                    </label>
+                    <input 
+                        type="number" 
+                        id="office_longitude" 
+                        name="office_longitude" 
+                        class="form-control" 
+                        step="0.000001"
+                        value="{{ $longitude ?? '107.890626' }}"
+                        required
+                        placeholder="107.890626"
+                    >
+                    <small style="color: var(--text-secondary); margin-top: 4px; display: block;">Contoh: 107.890626</small>
+                </div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label for="office_radius" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary);">
+                    Radius Jarak (Meter)
+                </label>
+                <input 
+                    type="number" 
+                    id="office_radius" 
+                    name="office_radius" 
+                    class="form-control" 
+                    value="{{ $radius ?? '500' }}"
+                    required
+                    placeholder="500"
+                >
+                <small style="color: var(--text-secondary); margin-top: 4px; display: block;">User harus berada dalam radius ini untuk bisa absen</small>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label for="office_address" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-primary);">
+                    Alamat Lokasi
+                </label>
+                <input 
+                    type="text" 
+                    id="office_address" 
+                    name="office_address" 
+                    class="form-control" 
+                    value="{{ $address ?? 'SMKN 1 Garut' }}"
+                    required
+                    placeholder="Masukkan alamat lokasi absensi"
+                >
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Simpan Lokasi
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="getMyLocation()">
+                    <i class="fas fa-location-arrow"></i> Ambil Lokasi Saya
+                </button>
+            </div>
+            @if($errors->has('office_latitude') || $errors->has('office_longitude') || $errors->has('office_radius'))
+                <div style="color: var(--danger); margin-top: 10px; font-size: 14px;">
+                    <i class="fas fa-exclamation-circle"></i> 
+                    {{ $errors->first('office_latitude') ?? $errors->first('office_longitude') ?? $errors->first('office_radius') }}
+                </div>
+            @endif
+            @if(session('success_location'))
+                <div style="color: var(--success); margin-top: 10px; font-size: 14px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-radius: 6px;">
+                    <i class="fas fa-check-circle"></i> {{ session('success_location') }}
+                </div>
+            @endif
+        </form>
+    </div>
+
+    <!-- System Info -->
+    <div class="filter-section">
+        <h3 style="margin-bottom: 20px; color: var(--text-primary);">ℹ️ Informasi Sistem</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 12px; font-weight: 600; color: var(--text-primary); width: 200px;">Environment</td>
+                <td style="padding: 12px; color: var(--text-secondary);">{{ config('app.env') }}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 12px; font-weight: 600; color: var(--text-primary);">URL Aplikasi</td>
+                <td style="padding: 12px; color: var(--text-secondary);">{{ config('app.url') }}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 12px; font-weight: 600; color: var(--text-primary);">Database</td>
+                <td style="padding: 12px; color: var(--text-secondary);">{{ config('database.default') }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; font-weight: 600; color: var(--text-primary);">Timezone</td>
+                <td style="padding: 12px; color: var(--text-secondary);">{{ config('app.timezone') }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script>
+function getMyLocation() {
+    if (!navigator.geolocation) {
+        alert('Browser Anda tidak support geolocation');
+        return;
+    }
+    
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            document.getElementById('office_latitude').value = lat.toFixed(6);
+            document.getElementById('office_longitude').value = lng.toFixed(6);
+            
+            alert(`✓ Lokasi berhasil diambil!\nLat: ${lat.toFixed(6)}\nLng: ${lng.toFixed(6)}`);
+        },
+        function(error) {
+            alert('Error: ' + error.message);
+        }
+    );
+}
+</script>
 
 @endsection

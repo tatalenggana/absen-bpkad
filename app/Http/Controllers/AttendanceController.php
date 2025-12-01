@@ -257,7 +257,7 @@ class AttendanceController extends Controller
         
         $attendances = $attendancesQuery->paginate(15);
         
-        return view('admin.dashboard-new', [
+        return view('admin.dashboard', [
             'stats' => $stats,
             'attendances' => $attendances,
             'selectedDivision' => $division,
@@ -346,7 +346,7 @@ class AttendanceController extends Controller
      */
     public function showSettings()
     {
-        return view('admin.settings-new', [
+        return view('admin.settings', [
             'deadline' => env('CHECK_IN_DEADLINE', '09:00'),
             'latitude' => env('OFFICE_LATITUDE', '-7.202507'),
             'longitude' => env('OFFICE_LONGITUDE', '107.890626'),
@@ -378,7 +378,7 @@ class AttendanceController extends Controller
         
         $attendances = $query->paginate(20);
 
-        return view('admin.attendance-report-new', [
+        return view('admin.attendance-report', [
             'attendances' => $attendances,
         ]);
     }

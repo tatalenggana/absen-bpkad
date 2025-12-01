@@ -1,0 +1,130 @@
+Penjelasan Website absen-bpkad
+
+Website absen-bpkad ini adalah sebuah sistem absensi online yang dibangun menggunakan framework Laravel. Fungsinya adalah untuk mencatat kehadiran (check-in/check-out) pegawai atau anggota BPKAD, serta memungkinkan admin untuk memantau laporan kehadiran. Fitur utamanya kemungkinan termasuk:
+- Autentikasi (login/register) untuk user dan admin.
+- Check-in dan check-out dengan pencatatan waktu dan lokasi.
+- Laporan kehadiran untuk admin.
+- Pengaturan (settings) terkait absensi.
+
+---
+
+Penjelasan Komponen Laravel (Middleware, Models, Controllers)
+
+Laravel menggunakan arsitektur MVC (Model-View-Controller) yang memisahkan logika aplikasi menjadi tiga bagian utama.
+
+1. Middleware:
+    - Apa itu: Middleware adalah lapisan kode yang berjalan sebelum atau sesudah sebuah request HTTP sampai ke controller. Mirip seperti "penjaga gerbang" atau "filter" untuk setiap permintaan yang masuk ke aplikasi Anda.
+    - Fungsi:
+        - Otentikasi: Memastikan user sudah login sebelum bisa mengakses halaman tertentu. (Contoh: AuthMiddleware)
+        - Otorisasi: Memastikan user memiliki peran atau izin yang benar (misal: hanya admin yang bisa akses halaman admin). (Contoh: AdminMiddleware, UserMiddleware)
+        - Logging: Mencatat setiap request yang masuk.
+        - Manipulasi Request/Response: Mengubah data request sebelum ke controller atau response sebelum dikirim balik.
+    - Di Projectmu: Kamu punya AdminMiddleware.php dan UserMiddleware.php di folder app/Http/Middleware, yang berarti website ini menggunakannya untuk membedakan akses antara admin dan user biasa.
+
+2. Models:
+    - Apa itu: Model adalah representasi dari data di database Anda. Di Laravel, kita sering menggunakan Eloquent ORM (Object-Relational Mapping) untuk berinteraksi dengan database. Model bertindak sebagai jembatan antara aplikasi dan tabel di database.
+    - Fungsi:
+        - Interaksi Database: Menyimpan, membaca, mengubah, dan menghapus data dari tabel database.
+        - Logika Bisnis: Bisa mengandung aturan atau logika terkait data itu sendiri.
+        - Relasi Data: Mendefinisikan hubungan antar tabel (misal: satu user punya banyak data kehadiran).
+    - Di Projectmu: Kamu punya Attendance.php, User.php, UserProfile.php di folder app/Models. Ini artinya kamu punya tabel attendances, users, dan user_profiles di database yang dikelola oleh masing-masing Model ini.
+
+3. Controllers:
+    - Apa itu: Controller adalah bagian yang menerima dan menangani permintaan (request) dari user. Ini adalah otak yang mengkoordinasikan apa yang harus dilakukan setelah menerima request.
+    - Fungsi:
+        - Menerima Request: Menganalisis permintaan user (misal: "mau lihat laporan kehadiran").
+        - Mengambil Data: Memanggil Model untuk mendapatkan atau menyimpan data dari database.
+        - Memproses Data: Melakukan logika bisnis sederhana (misal: menghitung total kehadiran).
+        - Mengembalikan Response: Menentukan apa yang akan dikirim kembali ke browser user (misal: menampilkan view HTML, mengirim data JSON).
+    - Di Projectmu: Kamu punya AttendanceController.php, AuthController.php, dan Controller.php di folder app/Http/Controllers. Ini berarti ada controller khusus untuk mengelola absensi, autentikasi user, dan controller dasar.
+
+---
+
+Pertanyaan UKK untuk Projekmu (Singkat dan Mudah Dipahami) & Contoh Jawaban
+
+1. Penjelasan tools perangkat lunak yang digunakan
+    - Pertanyaan: "Sebutkan dan jelaskan 3-5 tools perangkat lunak utama (misal: Laravel, MySQL, VS Code, Git) yang kamu gunakan untuk membangun website absensi ini?"
+    - Jawaban Contoh: "Saya menggunakan Laravel sebagai framework PHP untuk backend, Composer untuk manajemen dependensi PHP, Node.js dan npm untuk manajemen dependensi JavaScript dan frontend tooling (Vite), MySQL sebagai database, dan VS Code sebagai code editor."
+
+2. Mengeksekusi dan menjalankan source code
+    - Pertanyaan: "Bagaimana cara kamu menjalankan website ini agar bisa diakses di browser lokal (perintah terminal apa yang perlu dijalankan)?"
+    - Jawaban Contoh: "Untuk menjalankan source code, pertama saya pastikan XAMPP (Apache dan MySQL) sudah aktif. Lalu di terminal, saya jalankan cd C:\xampp\htdocs\absen-bpkad untuk masuk ke folder proyek. Kemudian saya menjalankan dua perintah utama: php artisan serve untuk backend Laravel, dan npm run dev di terminal terpisah untuk frontend Vite. Setelah itu, website bisa diakses di http://127.0.0.1:8000."
+
+3. Eksekusi source code sesuai dengan skenario
+    - Pertanyaan: "Jelaskan satu skenario penggunaan website ini (misal: seorang pegawai check-in) dan bagaimana aplikasi meresponsnya."
+    - Jawaban Contoh: "Skenario 'User Check-in': User membuka website, login, dan menekan tombol 'Check-in'. Aplikasi akan mengambil lokasi user, membandingkannya dengan lokasi kantor yang terdaftar di sistem, mencatat waktu, dan menyimpan data kehadiran ke database melalui AttendanceController dan Attendance Model. Jika berhasil, user akan melihat notifikasi sukses di halaman dashboard."
+
+4. Penggunaan metode pengembangan program (PHP Murni/Framework)
+    - Pertanyaan: "Website ini menggunakan metode pengembangan PHP murni atau framework? Jika framework, sebutkan dan mengapa kamu memilihnya?"
+    - Jawaban Contoh: "Website ini dikembangkan menggunakan framework Laravel. Saya memilih Laravel karena mempermudah pengembangan dengan menyediakan struktur MVC, ORM (Eloquent), sistem routing, dan fitur autentikasi bawaan yang membuat kode lebih terstruktur, aman, dan cepat dalam pengembangan."
+
+5. Penyesuaian rancangan aplikasi ERD dengan aplikasi yang dibuat (sesuai/tidak)
+    - Pertanyaan: "Apakah rancangan ERD (struktur tabel database) yang kamu buat sesuai dengan implementasi di website ini? Berikan contoh relasi antar tabel (misal: User dan Attendance)."
+    - Jawaban Contoh: "Ya, rancangan ERD saya sesuaikan dengan aplikasi yang dibuat. Contohnya, ada relasi One-to-One antara tabel users dan user_profiles (satu user punya satu profil tambahan), dan One-to-Many antara tabel users dan attendances (satu user bisa memiliki banyak catatan kehadiran)."
+
+6. Penggunaan pemodelan perangkat lunak sesuai dengan hasil program (UML/DFD)
+    - Pertanyaan: "Apakah kamu menggunakan pemodelan perangkat lunak (misal: UML/DFD) untuk projek ini? Jika iya, jelaskan satu contoh diagram yang kamu buat."
+    - Jawaban Contoh: "Untuk projek ini, saya fokus pada pemodelan ERD untuk database. Jika menggunakan UML, saya akan membuat Class Diagram untuk merepresentasikan Models (User, Attendance, UserProfile) dan relasinya, serta Sequence Diagram untuk menggambarkan alur check-in/check-out."
+
+7. Penjelasan struktur data program yang dibuat
+    - Pertanyaan: "Sebutkan dan jelaskan 2-3 struktur data utama (misal: informasi user, catatan kehadiran) yang kamu kelola di website ini."
+    - Jawaban Contoh: "Struktur data utama di website ini meliputi:
+        - User Data: Informasi user seperti nama, email, password, peran, dll.
+        - User Profile Data: Informasi tambahan user seperti divisi, tanggal lahir, dll.
+        - Attendance Data: Catatan kehadiran user yang meliputi tanggal, waktu check-in/check-out, lokasi, dan jalur foto."
+
+8. Implementasi struktur data sesuai dengan bahasa pemrograman yang digunakan
+    - Pertanyaan: "Bagaimana struktur data 'User' atau 'Attendance' kamu implementasikan dalam kode PHP (di file Model mana)?"
+    - Jawaban Contoh: "Struktur data ini diimplementasikan menggunakan Eloquent Models di Laravel. Misalnya, di app/Models/User.php, ada properti yang merepresentasikan kolom di tabel users dan juga relasi ke UserProfile dan Attendance. Eloquent akan secara otomatis memetakan objek PHP ke baris di database."
+
+9. Penerapan kode program sesuai dengan dokumentasi bahasa pemrograman (guidelines dan best practices)
+    - Pertanyaan: "Bagaimana kamu memastikan kode programmu sesuai dengan standar (guidelines dan best practices) Laravel atau PHP?"
+    - Jawaban Contoh: "Saya menerapkan guidelines Laravel seperti penggunaan Eloquent ORM, Service Providers, Middleware untuk otentikasi/otorisasi, dan Blade Templating untuk views. Saya juga mengikuti PSR (PHP Standard Recommendations) untuk penulisan kode PHP yang rapi dan konsisten."
+
+10. Efektivitas kode program
+    - Pertanyaan: "Apakah ada bagian kode yang kamu anggap paling efektif atau bisa dioptimalkan untuk kinerja lebih baik?"
+    - Jawaban Contoh: "Kode program cukup efektif. Penggunaan Eloquent ORM mempermudah query database. Untuk laporan kehadiran, saya mengambil data yang diperlukan saja (select spesifik kolom) dan melakukan paginasi (paginate(15)) untuk menghindari loading data yang terlalu besar, sehingga aplikasi tetap responsif."
+
+11. Penggunaan tipe data dalam kode program
+    - Pertanyaan: "Berikan contoh penggunaan tipe data seperti string, integer, atau datetime di database dan di kode PHP kamu."
+    - Jawaban Contoh: "Di database, saya menggunakan VARCHAR untuk name dan email di tabel users, DATETIME untuk check_in_time dan check_out_time di tabel attendances, serta DECIMAL untuk location_latitude dan location_longitude di tabel attendances. Di kode PHP, ini secara otomatis di-handle oleh Laravel, misalnya Carbon object untuk DATETIME."
+
+12. Penggunaan struktur percabangan (IF Statement/Percabangan Lainnya)
+    - Pertanyaan: "Di bagian mana kamu menggunakan percabangan if/else atau switch di kode programmu? Berikan contoh fungsinya."
+    - Jawaban Contoh: "Saya menggunakan if statement di app/Http/Controllers/AttendanceController.php untuk mengecek apakah user adalah admin atau bukan (auth()->user()->isAdmin()) untuk redirect ke dashboard yang sesuai. Juga ada if untuk validasi input request atau kondisi check-in/check-out."
+
+13. Penggunaan struktur perulangan yang digunakan dalam program
+    - Pertanyaan: "Di bagian mana kamu menggunakan perulangan foreach di kode programmu (misal: saat menampilkan daftar data)?"
+    - Jawaban Contoh: "Perulangan foreach banyak digunakan di file-file Blade view, misalnya di resources/views/admin/attendance-report.blade.php untuk menampilkan daftar kehadiran secara berulang dari variabel $attendances yang dikirim dari controller."
+
+14. Penerapan output pada web browser sesuai dengan source code
+    - Pertanyaan: "Bagaimana kode di file resources/views/admin/dashboard.blade.php menghasilkan tampilan di browser?"
+    - Jawaban Contoh: "Output pada web browser dihasilkan dari file-file Blade (.blade.php) di folder resources/views. Misalnya, return view('admin.dashboard', [...]) di controller akan me-render dashboard.blade.php. Laravel Blade akan memproses template ini, mengisi data dari controller, dan menghasilkan HTML akhir yang dikirim ke browser."
+
+15. Penerapan prosedur/fungsi yang digunakan dalam kode program
+    - Pertanyaan: "Berikan contoh sebuah fungsi yang kamu buat di AttendanceController dan jelaskan tujuannya."
+    - Jawaban Contoh: "Contoh fungsi adalah public function adminDashboard(Request $request) di AttendanceController.php. Tujuannya adalah untuk menampilkan halaman dashboard admin, di mana fungsi ini mengambil data kehadiran, menghitung statistik, dan menampilkannya melalui view admin.dashboard."
+
+16. Penerapan array dalam kode program
+    - Pertanyaan: "Di mana kamu menggunakan array di kode programmu (misal: untuk mengumpulkan data laporan)?"
+    - Jawaban Contoh: "Array digunakan saat mengirim data dari controller ke view, contohnya di return view('admin.dashboard', ['stats' => $stats, 'attendances' => $attendances]). $stats dan $attendances bisa jadi adalah array atau collection yang berisi banyak data."
+
+17. Penerapan kode program untuk membaca dan menulis data dari media penyimpan
+    - Pertanyaan: "Jelaskan bagaimana website ini membaca data kehadiran dari database dan menulis data check-in baru."
+    - Jawaban Contoh: "Membaca data: di AttendanceController, saat menampilkan laporan, saya menggunakan Eloquent seperti Attendance::where(...) untuk mengambil data kehadiran dari tabel attendances. Menulis data: saat user check-in, saya membuat objek Attendance baru, mengisi propertinya, lalu memanggil $attendance->save() untuk menyimpan data ke database."
+
+18. Melakukan pengujian program
+    - Pertanyaan: "Bagaimana cara kamu menguji fitur-fitur di website ini setelah selesai dikembangkan?"
+    - Jawaban Contoh: "Saya melakukan pengujian manual dengan mencoba setiap fitur (login, register, check-in, check-out, melihat laporan admin, mengubah settings) langsung di browser. Saya juga bisa menulis Unit Tests untuk Models dan Feature Tests untuk Controller menggunakan PHPUnit."
+
+19. Membuat dokumentasi program pada GitHub
+    - Pertanyaan: "Dokumentasi apa saja yang penting kamu cantumkan di GitHub untuk project ini? (contoh: README.md)."
+    - Jawaban Contoh: "Saya membuat README.md di GitHub yang berisi panduan instalasi, cara menjalankan aplikasi, daftar fitur, dan cara berkontribusi. Dokumentasi ini penting agar orang lain atau saya sendiri di kemudian hari bisa dengan mudah memahami dan menggunakan proyek ini."
+
+20. Melakukan debugging dari kode program yang dibuat
+    - Pertanyaan: "Jika kamu menemukan error di Laravel (misal: halaman putih), bagaimana langkah awalmu untuk mencari tahu penyebabnya?"
+    - Jawaban Contoh: "Jika terjadi error (misal: halaman blank atau error 500), langkah pertama adalah mengecek file storage/logs/laravel.log untuk melihat detail error. Saya juga bisa mengaktifkan APP_DEBUG=true di file .env untuk melihat pesan error langsung di browser, atau menggunakan dd() (dump and die) di kode untuk melihat nilai variabel."
+
+21. Memperbaiki hasil debugging
+    - Pertanyaan: "Ceritakan satu contoh error yang pernah kamu alami di project ini (misal: error migration) dan bagaimana kamu memperbaikinya."
+    - Jawaban Contoh: "Contoh error yang saya alami adalah 'Duplicate column name' saat migrate. Setelah debugging log, saya menemukan ada dua migration yang mencoba menambahkan kolom yang sama. Saya memperbaikinya dengan menghapus file migration yang duplikat, lalu menjalankan php artisan migrate:fresh untuk membersihkan dan membangun ulang database dengan migration yang sudah benar."
