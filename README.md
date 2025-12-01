@@ -198,34 +198,6 @@ Diagram kelas ini menggambarkan struktur sistem dari perspektif object-oriented 
 
     -   Status: `present`, `late`, `absent`
 
-#### **Implementasi JavaScript**
-```javascript
-// Toggle sidebar dengan hamburger button
-sidebarToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('active'); // Add/remove class 'active'
-});
-
-// Auto-close sidebar saat klik konten
-mainContent.addEventListener('click', () => {
-    if (window.innerWidth <= 600) {
-        sidebar.classList.remove('active');
-    }
-});
-
-// Responsive check saat resize window
-window.addEventListener('resize', () => {
-    if (window.innerWidth > 600) {
-        sidebar.classList.remove('active');
-        sidebarToggle.style.display = 'none';
-    }
-});
-```
-
-**Hasil:** Admin panel sekarang **mobile-friendly** dan optimal untuk Android/iOS devices! ✅
-
----
-
-
 
 | Aspek      | ERD                                        | UML                                              |
 | ---------- | ------------------------------------------ | ------------------------------------------------ |
