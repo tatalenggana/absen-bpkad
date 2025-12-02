@@ -180,16 +180,16 @@ Diagram ini menunjukkan tabel-tabel utama dan hubungan di antara mereka:
 
 ![UML Absensi BPKAD](./public/image/UmlAbsenBPKAD.png)
 
-#### Penjelasan Singkat UML
+---
 
-Diagram kelas ini menggambarkan struktur sistem dari perspektif object-oriented (Laravel):
+## **Penjelasan UML Use Case Diagram - Attendance System**
 
--   **`Users`**: Kelas utama untuk otentikasi
+### **Actors (Pelaku)** 👥
 
     -   Relasi **1-to-1** dengan `user_profiles`
     -   Relasi **1-to-many** dengan `attendances` dan `sessions`
 
--   **`User_profiles`**: Detail profil peserta PKL
+-   **`User_profiles`**: Detail profil pe   serta PKL
 
     -   Unique constraint pada `user_id` (one-to-one relationship)
     -   Menyimpan sekolah, bidang penempatan, catatan
@@ -197,13 +197,125 @@ Diagram kelas ini menggambarkan struktur sistem dari perspektif object-oriented 
 -   **`Attendances`**: Catatan absensi dengan GPS & Foto
 
     -   Status: `present`, `late`, `absent`
+=======
+1. **Guest** 👤 - Pengunjung yang belum login
+2. **User** 👨‍💼 - Karyawan/staff yang sudah login
+3. **Admin** 👨‍💼 - Administrator sistem
 
+---
 
-| Aspek      | ERD                                        | UML                                              |
-| ---------- | ------------------------------------------ | ------------------------------------------------ |
-| **Fokus**  | Struktur basis data logis                  | Struktur kode (object-oriented)                  |
-| **Detail** | Tipe data kolom (`int`, `varchar`, `date`) | Constraints (`UNIQUE`, `ENUM`), relasi eksplisit |
-| **Tujuan** | Desain database schema                     | Desain class & hubungan antar class              |
+### **Fitur Guest** 🔓
+
+- **Login** - Masuk ke sistem dengan email & password
+- **Register** - Daftar akun baru
+
+---
+
+### **Fitur User** ✅
+
+**Dashboard & Profile:**
+- **View Dashboard** - Lihat dashboard pribadi & riwayat absensi
+- **View Profile** - Lihat profil & data diri
+
+**Attendance:**
+- **Check In** - Absen masuk (validasi lokasi & waktu)
+- **Check Out** - Absen pulang
+
+**Authentication:**
+- **Logout** - Keluar dari sistem
+
+---
+
+### **Fitur Admin** 👨‍💻
+
+**Dashboard & Reports:**
+- **View Dashboard** - Dashboard admin dengan overview attendance
+- **View Attendance Report** - Laporan absensi lengkap semua user
+- **Filter by Date** - Filter absensi berdasarkan tanggal tertentu
+- **Filter by Month** - Filter absensi berdasarkan bulan
+- **View User History** - Lihat riwayat absensi per user
+
+**Settings:**
+- **Manage Settings** - Akses halaman pengaturan
+- **Update Deadline** - Update batas waktu check-in/check-out
+- **Update Location** - Update lokasi kantor untuk validasi GPS
+
+**Authentication:**
+- **Logout** - Keluar dari sistem
+
+---
+
+### **Alur Sistem** 🔄
+
+**Registration & Login:**
+```
+Guest → Register → Create account → Login → Redirect to Dashboard
+                                           ↓
+                                    Check role:
+                                    - Admin → Admin Dashboard
+                                    - User → User Dashboard
+```
+
+**User Check-in Flow:**
+```
+User → Click Check In → Validate:
+                        - Sudah check-in hari ini?
+                        - Lokasi dalam radius kantor?
+                        - Waktu sesuai deadline?
+                              ↓
+                        Valid → Save to database
+                              ↓
+                        Invalid → Return error message
+```
+
+**Admin Filter Flow:**
+```
+Admin → Select filter (Date/Month) → Query database → Display results
+```
+
+---
+
+### **Middleware & Authorization** 🔒
+
+**Route Protection:**
+```
+Request → Check middleware:
+          - guest: Hanya untuk yang belum login
+          - auth: Harus login dulu
+          - user: Khusus role user
+          - admin: Khusus role admin
+                    ↓
+          Valid → Access granted
+                    ↓
+          Invalid → Redirect to login/unauthorized
+```
+
+**Role Check:**
+- `isAdmin()` - Cek apakah user punya role admin
+- Auto redirect sesuai role setelah login
+
+---
+
+### **Database Relations** 🗄️
+
+```
+users ──── attendances (1:N)
+  ↓
+role: admin/user
+
+settings (untuk deadline & location)
+```
+
+---
+
+### **Key Features** ⭐
+
+✅ **Role-based Access Control** - Admin & User punya akses berbeda
+✅ **GPS Validation** - Check-in harus di lokasi kantor
+✅ **Time Validation** - Sesuai deadline yang diset admin
+✅ **Attendance History** - Track semua absensi user
+✅ **Flexible Settings** - Admin bisa update deadline & lokasi
+✅ **Report & Filter** - Filter absensi by date/month
 
 ---
 
